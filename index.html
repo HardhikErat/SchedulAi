@@ -43,7 +43,7 @@
         <button class="w-full bg-indigo-600 text-white py-2 rounded">Sign In</button>
       </form>
 
-      <!-- Updated signup form -->
+      <!-- Signup form -->
       <form id="signupForm" class="space-y-3 hidden mt-4">
         <div class="grid grid-cols-2 gap-2">
           <input id="firstName" placeholder="First name" required class="px-3 py-2 border rounded"/>
@@ -53,17 +53,23 @@
         <input id="mobile" placeholder="Mobile" class="w-full px-3 py-2 border rounded"/>
         <input id="userId" placeholder="Student/Employee ID" class="w-full px-3 py-2 border rounded"/>
 
-        <!-- 🔽 Department Dropdown -->
-        <select id="signupDept" class="w-full px-3 py-2 border rounded" required>
-          <option value="">Select Department</option>
-        </select>
+        <!-- Student-only fields -->
+        <div id="studentFields">
+          <!-- Department Dropdown -->
+          <select id="signupDept" class="w-full px-3 py-2 border rounded" required>
+            <option value="">Select Department</option>
+          </select>
 
-        <!-- 🔽 Class Dropdown -->
-        <select id="signupClass" class="w-full px-3 py-2 border rounded" required>
-          <option value="">Select Class</option>
-        </select>
+          <!-- Class Dropdown -->
+          <select id="signupClass" class="w-full px-3 py-2 border rounded" required>
+            <option value="">Select Class</option>
+          </select>
+        </div>
 
         <input id="signupPassword" type="password" placeholder="Password" required class="w-full px-3 py-2 border rounded"/>
+        <p id="passwordHint" class="text-xs mt-1 text-gray-500">
+          Password must be at least 8 characters, include letters and numbers
+        </p>
         <input id="confirmPassword" type="password" placeholder="Confirm password" required class="w-full px-3 py-2 border rounded"/>
         <button class="w-full bg-green-600 text-white py-2 rounded">Create Account</button>
       </form>
@@ -118,15 +124,27 @@
 
     <!-- Add lecture form -->
     <form id="addLectureForm" class="grid grid-cols-6 gap-2 bg-white p-4 rounded shadow mb-6">
-      <select id="subjectSelect" class="col-span-2 p-2 border rounded" required></select>
-      <select id="classSelect" class="p-2 border rounded" required></select>
-      <select id="classroomSelect" class="p-2 border rounded" required></select>
+      <select id="subjectSelect" class="col-span-2 p-2 border rounded" required>
+        <option value="">Select Subject</option>
+      </select>
+      <select id="classSelect" class="p-2 border rounded" required>
+        <option value="">Select Class</option>
+      </select>
+      <select id="classroomSelect" class="p-2 border rounded" required>
+        <option value="">Select Room</option>
+      </select>
       <select id="daySelect" class="p-2 border rounded" required>
         <option>Monday</option><option>Tuesday</option><option>Wednesday</option><option>Thursday</option><option>Friday</option>
       </select>
       <select id="timeSelect" class="p-2 border rounded" required>
-        <option>09:00-10:00</option><option>10:00-11:00</option><option>11:00-12:00</option>
-        <option>12:00-13:00</option><option>14:00-15:00</option><option>15:00-16:00</option><option>16:00-17:00</option>
+        <option>09:00-10:00</option>
+        <option>10:00-11:00</option>
+        <option>11:00-12:00</option>
+        <option>12:00-13:00</option>
+        <option>13:00-14:00</option>
+        <option>14:00-15:00</option>
+        <option>15:00-16:00</option>
+        <option>16:00-17:00</option>
       </select>
       <button class="col-span-6 bg-green-600 text-white py-2 rounded">Add Lecture</button>
     </form>
@@ -164,7 +182,9 @@
           <h4 class="font-medium mb-2">Classes</h4>
           <form id="addClassForm" class="flex gap-2 mb-2">
             <input id="className" placeholder="Class (e.g. CS-A)" class="flex-1 p-2 border rounded" required />
-            <select id="classDept" class="p-2 border rounded"></select>
+            <select id="classDept" class="p-2 border rounded">
+              <option value="">-- Dept --</option>
+            </select>
             <button class="px-3 bg-indigo-600 text-white rounded">Add</button>
           </form>
           <ul id="classesList" class="pl-4 text-sm text-gray-700"></ul>
@@ -173,7 +193,9 @@
           <h4 class="font-medium mb-2">Subjects</h4>
           <form id="addSubjectForm" class="flex gap-2 mb-2">
             <input id="subjectName" placeholder="Subject" class="flex-1 p-2 border rounded" required />
-            <select id="subjectDept" class="p-2 border rounded"></select>
+            <select id="subjectDept" class="p-2 border rounded">
+              <option value="">-- Dept --</option>
+            </select>
             <button class="px-3 bg-indigo-600 text-white rounded">Add</button>
           </form>
           <ul id="subjectsList" class="pl-4 text-sm text-gray-700"></ul>
@@ -187,6 +209,26 @@
           </form>
           <ul id="classroomsList" class="pl-4 text-sm text-gray-700"></ul>
         </div>
+      </div>
+
+      <!-- Lunch Break Setting -->
+      <div class="mt-8">
+        <h4 class="font-medium mb-2">Lunch Break</h4>
+        <form id="lunchBreakForm" class="flex gap-2 mb-2">
+          <select id="lunchBreakSlot" class="p-2 border rounded">
+            <option value="">-- Select Slot --</option>
+            <option>09:00-10:00</option>
+            <option>10:00-11:00</option>
+            <option>11:00-12:00</option>
+            <option>12:00-13:00</option>
+            <option>13:00-14:00</option>
+            <option>14:00-15:00</option>
+            <option>15:00-16:00</option>
+            <option>16:00-17:00</option>
+          </select>
+          <button class="px-3 bg-indigo-600 text-white rounded">Save</button>
+        </form>
+        <p class="text-sm text-gray-600">Current Lunch Break: <span id="currentLunchBreak">None</span></p>
       </div>
     </section>
   </main>
@@ -213,8 +255,11 @@
     const auth = getAuth(app);
     const fdb = getFirestore(app);
 
+    // ======= Global State =======
     let currentUser = null, currentRole = null;
+    let lunchBreakSlot = null;
 
+    // ======= Utility =======
     const showMessage = (msg, type="success") => {
       const d = document.createElement("div");
       d.className = `p-3 rounded shadow ${type==="error"?"bg-red-100 text-red-700":"bg-green-100 text-green-700"} fade-in`;
@@ -223,170 +268,451 @@
       setTimeout(()=>d.remove(),3000);
     };
 
-    // Role handling
+    // ======= Role Handling =======
     window.selectRole = role => {
       currentRole = role;
       document.getElementById("roleSelection").classList.add("hidden");
       document.getElementById("loginScreen").classList.remove("hidden");
       document.getElementById("loginTitle").textContent = role.charAt(0).toUpperCase()+role.slice(1)+" Login";
-    };
-    window.showRoleSelection = ()=>{ document.getElementById("loginScreen").classList.add("hidden"); document.getElementById("roleSelection").classList.remove("hidden"); currentRole=null; };
 
+      // Hide class/department fields for teachers
+      const studentFields = document.getElementById("studentFields");
+      if (studentFields) {
+        if (role === "student") {
+          studentFields.style.display = "block";
+        } else {
+          studentFields.style.display = "none";
+        }
+      }
+    };
+
+    window.showRoleSelection = ()=>{
+      document.getElementById("loginScreen").classList.add("hidden");
+      document.getElementById("roleSelection").classList.remove("hidden");
+      currentRole = null;
+    };
+
+    // ======= Auth Mode Toggle =======
     let isLoginMode = true;
     window.toggleAuthMode = ()=>{
       isLoginMode = !isLoginMode;
       document.getElementById("loginForm").classList.toggle("hidden",!isLoginMode);
       document.getElementById("signupForm").classList.toggle("hidden",isLoginMode);
-      document.getElementById("toggleAuth").textContent = isLoginMode ? "Don't have an account? Sign up":"Already have an account? Sign in";
-      if (!isLoginMode) populateSignupDropdowns();
+      document.getElementById("toggleAuth").textContent = isLoginMode ? "Don't have an account? Sign up" : "Already have an account? Sign in";
+      // Only load dropdowns when student is selected and we're in signup
+      if (!isLoginMode && currentRole === "student") {
+        populateSignupDropdowns();
+      }
     };
 
-    // Signup
+    // ======= Populate Signup Dropdowns (student only) =======
+    async function populateSignupDropdowns(){
+      // Departments
+      const deptSnap = await getDocs(collection(fdb,"departments"));
+      const deptSelect = document.getElementById("signupDept");
+      if (deptSelect) {
+        deptSelect.innerHTML = '<option value="">Select Department</option>';
+        deptSnap.forEach(d=>{
+          const opt=document.createElement("option");
+          opt.value=d.data().name; opt.textContent=d.data().name;
+          deptSelect.appendChild(opt);
+        });
+      }
+      // Classes
+      const classSnap = await getDocs(collection(fdb,"classes"));
+      const classSelect = document.getElementById("signupClass");
+      if (classSelect) {
+        classSelect.innerHTML = '<option value="">Select Class</option>';
+        classSnap.forEach(c=>{
+          const data=c.data();
+          const opt=document.createElement("option");
+          opt.value=data.name; opt.textContent=`${data.name} (${data.department||"No Dept"})`;
+          classSelect.appendChild(opt);
+        });
+      }
+    }
+
+    // ======= Password Strength Indicator =======
+    const signupPasswordEl = document.getElementById("signupPassword");
+    const passwordHint = document.getElementById("passwordHint");
+    signupPasswordEl.addEventListener("input", () => {
+      const pass = signupPasswordEl.value;
+      const regex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
+      if (!pass) {
+        passwordHint.textContent = "Password must be at least 8 characters, include letters and numbers";
+        passwordHint.className = "text-xs mt-1 text-gray-500";
+      } else if (regex.test(pass)) {
+        passwordHint.textContent = "Strong password ✔";
+        passwordHint.className = "text-xs mt-1 text-green-600";
+      } else {
+        passwordHint.textContent = "Weak password ✘ (must be ≥8 chars, include letters and numbers)";
+        passwordHint.className = "text-xs mt-1 text-red-600";
+      }
+    });
+
+    // ======= Signup =======
     document.getElementById("signupForm").addEventListener("submit",async e=>{
       e.preventDefault();
+      const first = document.getElementById("firstName").value.trim();
+      const last = document.getElementById("lastName").value.trim();
+      const email = document.getElementById("signupEmail").value.trim();
+      const mobile = document.getElementById("mobile").value.trim();
+      const userIdVal = document.getElementById("userId").value.trim();
+      const deptVal = (currentRole === "student") ? document.getElementById("signupDept").value : null;
+      const classVal = (currentRole === "student") ? document.getElementById("signupClass").value : null;
       const pass = document.getElementById("signupPassword").value;
-      if(pass!==document.getElementById("confirmPassword").value){ showMessage("Passwords mismatch","error"); return; }
+      const confirm = document.getElementById("confirmPassword").value;
+
+      if(pass!==confirm){ showMessage("Passwords mismatch","error"); return; }
+
+      // ✅ Password constraints
+      const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
+      if (!passwordRegex.test(pass)) {
+        showMessage("Password must be at least 8 characters long and contain letters and numbers","error");
+        return;
+      }
+
+      // If student, ensure dept/class are chosen
+      if (currentRole === "student" && (!deptVal || !classVal)) {
+        showMessage("Please select Department and Class","error");
+        return;
+      }
+
       try {
-        const cred = await createUserWithEmailAndPassword(auth, signupEmail.value, pass);
+        const cred = await createUserWithEmailAndPassword(auth, email, pass);
         await setDoc(doc(fdb,"users",cred.user.uid),{
-          firstName:firstName.value,lastName:lastName.value,email:signupEmail.value,
-          mobile:mobile.value,userId:userId.value,department:signupDept.value,className:signupClass.value,
-          role:currentRole,joinDate:new Date().toISOString()
+          firstName:first,
+          lastName:last,
+          email,
+          mobile,
+          userId:userIdVal,
+          role:currentRole,
+          department: (currentRole === "student") ? deptVal : null,
+          className: (currentRole === "student") ? classVal : null,
+          joinDate:new Date().toISOString()
         });
-        showMessage("Account created, please login"); toggleAuthMode();
+        showMessage("Account created, please login");
+        isLoginMode = true; window.toggleAuthMode();
       }catch(err){ console.error(err); showMessage("Signup failed","error"); }
     });
 
-    // Login
+    // ======= Login =======
     document.getElementById("loginForm").addEventListener("submit",async e=>{
       e.preventDefault();
+      const email = document.getElementById("loginEmail").value.trim();
+      const pass = document.getElementById("loginPassword").value;
       try {
-        const cred = await signInWithEmailAndPassword(auth, loginEmail.value, loginPassword.value);
+        const cred = await signInWithEmailAndPassword(auth, email, pass);
         const snap = await getDoc(doc(fdb,"users",cred.user.uid));
         if(!snap.exists()){ showMessage("Profile missing","error"); return; }
-        const data = snap.data(); if(data.role!==currentRole){ showMessage("Wrong role","error"); return; }
-        currentUser = {id:cred.user.uid,...data};
-        loginScreen.classList.add("hidden");
-        if(currentRole==="student"){ studentDashboard.classList.remove("hidden"); studentName.textContent=currentUser.firstName+" "+currentUser.lastName; loadStudentTimetable(); }
-        if(currentRole==="teacher"){ teacherDashboard.classList.remove("hidden"); teacherName.textContent=currentUser.firstName+" "+currentUser.lastName; initManagementPanel(); loadTeacherTimetable(); }
-      }catch(err){ showMessage("Login failed","error"); console.error(err); }
+        const data = snap.data();
+        if(data.role!==currentRole){ showMessage(`Wrong role for this account (${data.role})`,"error"); await signOut(auth); return; }
+        currentUser = { id: cred.user.uid, ...data };
+        document.getElementById("loginScreen").classList.add("hidden");
+
+        if(currentRole==="student"){
+          document.getElementById("studentDashboard").classList.remove("hidden");
+          document.getElementById("studentName").textContent = currentUser.firstName+" "+currentUser.lastName;
+          await loadLunchBreak(); // get lunch slot
+          await loadStudentTimetable();
+        } else {
+          document.getElementById("teacherDashboard").classList.remove("hidden");
+          document.getElementById("teacherName").textContent = currentUser.firstName+" "+currentUser.lastName;
+          await initManagementPanel(); // includes loadLunchBreak()
+          await loadTeacherTimetable();
+        }
+
+        showMessage("Login successful");
+      }catch(err){ console.error(err); showMessage("Login failed","error"); }
     });
 
-    window.logout = async ()=>{ await signOut(auth); currentUser=null; currentRole=null; studentDashboard.classList.add("hidden"); teacherDashboard.classList.add("hidden"); roleSelection.classList.remove("hidden"); };
+    // ======= Logout =======
+    window.logout = async ()=>{
+      try { await signOut(auth); } catch(_) {}
+      currentUser=null; currentRole=null;
+      document.getElementById("studentDashboard").classList.add("hidden");
+      document.getElementById("teacherDashboard").classList.add("hidden");
+      document.getElementById("roleSelection").classList.remove("hidden");
+    };
 
-    // Populate signup dropdowns
-    async function populateSignupDropdowns(){
-      const deptSnap = await getDocs(collection(fdb,"departments"));
-      signupDept.innerHTML='<option value="">Select Department</option>';
-      deptSnap.forEach(d=>{ let opt=document.createElement("option"); opt.value=d.data().name; opt.textContent=d.data().name; signupDept.appendChild(opt); });
-      const classSnap = await getDocs(collection(fdb,"classes"));
-      signupClass.innerHTML='<option value="">Select Class</option>';
-      classSnap.forEach(c=>{ let data=c.data(); let opt=document.createElement("option"); opt.value=data.name; opt.textContent=`${data.name} (${data.department})`; signupClass.appendChild(opt); });
-    }
-
-    // Management Panel (with delete)
+    // ======= Management Panel (CRUD) =======
     async function renderDepartments(){
       const snap=await getDocs(collection(fdb,"departments"));
-      departmentsList.innerHTML=''; classDept.innerHTML=''; subjectDept.innerHTML='';
+      const list=document.getElementById("departmentsList");
+      const classDept=document.getElementById("classDept");
+      const subjectDept=document.getElementById("subjectDept");
+      list.innerHTML=''; classDept.innerHTML='<option value="">-- Dept --</option>'; subjectDept.innerHTML='<option value="">-- Dept --</option>';
       snap.forEach(docSnap=>{
         const d=docSnap.data();
         const li=document.createElement("li");
         li.className="flex justify-between items-center";
-        li.innerHTML=`<span>${d.name}</span><button data-id="${docSnap.id}" class="delete-dept bg-red-500 text-white px-2 py-0.5 text-xs rounded">Delete</button>`;
-        departmentsList.appendChild(li);
+        li.innerHTML=`<span>${d.name}</span>
+          <button data-id="${docSnap.id}" class="delete-dept bg-red-500 text-white px-2 py-0.5 text-xs rounded">Delete</button>`;
+        list.appendChild(li);
+        const o1=document.createElement("option"); o1.value=d.name; o1.textContent=d.name; classDept.appendChild(o1);
+        const o2=document.createElement("option"); o2.value=d.name; o2.textContent=d.name; subjectDept.appendChild(o2);
       });
-      document.querySelectorAll(".delete-dept").forEach(btn=>btn.onclick=async()=>{ await deleteDoc(doc(fdb,"departments",btn.dataset.id)); renderDepartments(); });
+      document.querySelectorAll(".delete-dept").forEach(btn=>btn.onclick=async()=>{
+        await deleteDoc(doc(fdb,"departments",btn.dataset.id));
+        showMessage("Department deleted"); renderDepartments();
+      });
     }
 
     async function renderClasses(){
       const snap=await getDocs(collection(fdb,"classes"));
-      classesList.innerHTML=''; classSelect.innerHTML='<option value="">Select Class</option>';
+      const list=document.getElementById("classesList");
+      const classSelect=document.getElementById("classSelect");
+      list.innerHTML=''; classSelect.innerHTML='<option value="">Select Class</option>';
       snap.forEach(docSnap=>{
         const d=docSnap.data();
         const li=document.createElement("li");
         li.className="flex justify-between items-center";
-        li.innerHTML=`<span>${d.name} (${d.department})</span><button data-id="${docSnap.id}" class="delete-class bg-red-500 text-white px-2 py-0.5 text-xs rounded">Delete</button>`;
-        classesList.appendChild(li);
-        let opt=document.createElement("option"); opt.value=d.name; opt.textContent=d.name; classSelect.appendChild(opt);
+        li.innerHTML=`<span>${d.name} (${d.department||"No Dept"})</span>
+          <button data-id="${docSnap.id}" class="delete-class bg-red-500 text-white px-2 py-0.5 text-xs rounded">Delete</button>`;
+        list.appendChild(li);
+        const opt=document.createElement("option"); opt.value=d.name; opt.textContent=d.name; classSelect.appendChild(opt);
       });
-      document.querySelectorAll(".delete-class").forEach(btn=>btn.onclick=async()=>{ await deleteDoc(doc(fdb,"classes",btn.dataset.id)); renderClasses(); });
+      document.querySelectorAll(".delete-class").forEach(btn=>btn.onclick=async()=>{
+        await deleteDoc(doc(fdb,"classes",btn.dataset.id));
+        showMessage("Class deleted"); renderClasses();
+      });
     }
 
     async function renderSubjects(){
       const snap=await getDocs(collection(fdb,"subjects"));
-      subjectsList.innerHTML=''; subjectSelect.innerHTML='<option value="">Select Subject</option>';
+      const list=document.getElementById("subjectsList");
+      const subjectSelect=document.getElementById("subjectSelect");
+      list.innerHTML=''; subjectSelect.innerHTML='<option value="">Select Subject</option>';
       snap.forEach(docSnap=>{
         const d=docSnap.data();
         const li=document.createElement("li");
         li.className="flex justify-between items-center";
-        li.innerHTML=`<span>${d.name} (${d.department})</span><button data-id="${docSnap.id}" class="delete-subj bg-red-500 text-white px-2 py-0.5 text-xs rounded">Delete</button>`;
-        subjectsList.appendChild(li);
-        let opt=document.createElement("option"); opt.value=d.name; opt.textContent=d.name; subjectSelect.appendChild(opt);
+        li.innerHTML=`<span>${d.name} (${d.department||"No Dept"})</span>
+          <button data-id="${docSnap.id}" class="delete-subj bg-red-500 text-white px-2 py-0.5 text-xs rounded">Delete</button>`;
+        list.appendChild(li);
+        const opt=document.createElement("option"); opt.value=d.name; opt.textContent=d.name; subjectSelect.appendChild(opt);
       });
-      document.querySelectorAll(".delete-subj").forEach(btn=>btn.onclick=async()=>{ await deleteDoc(doc(fdb,"subjects",btn.dataset.id)); renderSubjects(); });
+      document.querySelectorAll(".delete-subj").forEach(btn=>btn.onclick=async()=>{
+        await deleteDoc(doc(fdb,"subjects",btn.dataset.id));
+        showMessage("Subject deleted"); renderSubjects();
+      });
     }
 
     async function renderClassrooms(){
       const snap=await getDocs(collection(fdb,"classrooms"));
-      classroomsList.innerHTML=''; classroomSelect.innerHTML='<option value="">Select Room</option>';
+      const list=document.getElementById("classroomsList");
+      const classroomSelect=document.getElementById("classroomSelect");
+      list.innerHTML=''; classroomSelect.innerHTML='<option value="">Select Room</option>';
       snap.forEach(docSnap=>{
         const d=docSnap.data();
         const li=document.createElement("li");
         li.className="flex justify-between items-center";
-        li.innerHTML=`<span>${d.name} (${d.capacity||'N/A'})</span><button data-id="${docSnap.id}" class="delete-room bg-red-500 text-white px-2 py-0.5 text-xs rounded">Delete</button>`;
-        classroomsList.appendChild(li);
-        let opt=document.createElement("option"); opt.value=d.name; opt.textContent=d.name; classroomSelect.appendChild(opt);
+        li.innerHTML=`<span>${d.name} (${d.capacity||'N/A'})</span>
+          <button data-id="${docSnap.id}" class="delete-room bg-red-500 text-white px-2 py-0.5 text-xs rounded">Delete</button>`;
+        list.appendChild(li);
+        const opt=document.createElement("option"); opt.value=d.name; opt.textContent=d.name; classroomSelect.appendChild(opt);
       });
-      document.querySelectorAll(".delete-room").forEach(btn=>btn.onclick=async()=>{ await deleteDoc(doc(fdb,"classrooms",btn.dataset.id)); renderClassrooms(); });
+      document.querySelectorAll(".delete-room").forEach(btn=>btn.onclick=async()=>{
+        await deleteDoc(doc(fdb,"classrooms",btn.dataset.id));
+        showMessage("Classroom deleted"); renderClassrooms();
+      });
     }
 
-    document.getElementById("addDepartmentForm").onsubmit=async e=>{ e.preventDefault(); await addDoc(collection(fdb,"departments"),{name:departmentName.value}); departmentName.value=''; renderDepartments(); };
-    document.getElementById("addClassForm").onsubmit=async e=>{ e.preventDefault(); await addDoc(collection(fdb,"classes"),{name:className.value,department:classDept.value}); className.value=''; renderClasses(); };
-    document.getElementById("addSubjectForm").onsubmit=async e=>{ e.preventDefault(); await addDoc(collection(fdb,"subjects"),{name:subjectName.value,department:subjectDept.value}); subjectName.value=''; renderSubjects(); };
-    document.getElementById("addClassroomForm").onsubmit=async e=>{ e.preventDefault(); await addDoc(collection(fdb,"classrooms"),{name:classroomName.value,capacity:+classroomCapacity.value||0}); classroomName.value=''; classroomCapacity.value=''; renderClassrooms(); };
+    document.getElementById("addDepartmentForm").onsubmit=async e=>{
+      e.preventDefault();
+      const name=document.getElementById("departmentName").value.trim();
+      if(!name) return;
+      await addDoc(collection(fdb,"departments"),{name});
+      document.getElementById("departmentName").value='';
+      showMessage("Department added"); renderDepartments();
+    };
 
-    async function initManagementPanel(){ renderDepartments(); renderClasses(); renderSubjects(); renderClassrooms(); }
+    document.getElementById("addClassForm").onsubmit=async e=>{
+      e.preventDefault();
+      const name=document.getElementById("className").value.trim();
+      const dept=document.getElementById("classDept").value || null;
+      if(!name) return;
+      await addDoc(collection(fdb,"classes"),{name,department:dept});
+      document.getElementById("className").value=''; document.getElementById("classDept").value='';
+      showMessage("Class added"); renderClasses();
+    };
 
-    // Timetables
+    document.getElementById("addSubjectForm").onsubmit=async e=>{
+      e.preventDefault();
+      const name=document.getElementById("subjectName").value.trim();
+      const dept=document.getElementById("subjectDept").value || null;
+      if(!name) return;
+      await addDoc(collection(fdb,"subjects"),{name,department:dept});
+      document.getElementById("subjectName").value=''; document.getElementById("subjectDept").value='';
+      showMessage("Subject added"); renderSubjects();
+    };
+
+    document.getElementById("addClassroomForm").onsubmit=async e=>{
+      e.preventDefault();
+      const name=document.getElementById("classroomName").value.trim();
+      const capacity=+document.getElementById("classroomCapacity").value||0;
+      if(!name) return;
+      await addDoc(collection(fdb,"classrooms"),{name,capacity});
+      document.getElementById("classroomName").value=''; document.getElementById("classroomCapacity").value='';
+      showMessage("Classroom added"); renderClassrooms();
+    };
+
+    async function initManagementPanel(){
+      await Promise.all([renderDepartments(), renderClasses(), renderSubjects(), renderClassrooms()]);
+      await loadLunchBreak();
+    }
+
+    // ======= Lunch Break =======
+    async function loadLunchBreak(){
+      const snap = await getDoc(doc(fdb,"settings","lunchBreak"));
+      if(snap.exists()){
+        lunchBreakSlot = snap.data().slot || null;
+        const cur = document.getElementById("currentLunchBreak");
+        if (cur) cur.textContent = lunchBreakSlot || "None";
+      } else {
+        lunchBreakSlot = null;
+        const elt = document.getElementById("currentLunchBreak");
+        if (elt) elt.textContent = "None";
+      }
+      updateTimeSelectOptions();
+      return lunchBreakSlot;
+    }
+
+    document.getElementById("lunchBreakForm").addEventListener("submit", async (e)=>{
+      e.preventDefault();
+      const slot = document.getElementById("lunchBreakSlot").value;
+      if(!slot){ showMessage("Select a slot","error"); return; }
+      await setDoc(doc(fdb,"settings","lunchBreak"),{ slot });
+      lunchBreakSlot = slot;
+      document.getElementById("currentLunchBreak").textContent = slot;
+      updateTimeSelectOptions();
+      showMessage("Lunch break updated");
+      if(currentRole==="teacher") await loadTeacherTimetable();
+      if(currentRole==="student") await loadStudentTimetable();
+    });
+
+    function updateTimeSelectOptions(){
+      const sel = document.getElementById("timeSelect");
+      if(!sel) return;
+      [...sel.options].forEach(opt=>{
+        if(!opt.value) return;
+        const val = opt.value || opt.textContent;
+        if(lunchBreakSlot && val===lunchBreakSlot){
+          opt.disabled = true;
+          if(!opt.textContent.includes("(Lunch)")) opt.textContent = `${val} (Lunch)`;
+        }else{
+          opt.disabled = false;
+          opt.textContent = val.replace(" (Lunch)","");
+        }
+      });
+    }
+
+    // ======= Timetables =======
+    const SLOT_TIMES = [
+      "09:00-10:00","10:00-11:00","11:00-12:00","12:00-13:00",
+      "13:00-14:00","14:00-15:00","15:00-16:00","16:00-17:00"
+    ];
+    const WEEK_DAYS = ["Monday","Tuesday","Wednesday","Thursday","Friday"];
+
     async function loadStudentTimetable(){
-      const q=query(collection(fdb,"lectures"),where("className","==",currentUser.className));
-      const snap=await getDocs(q); const lectures=snap.docs.map(d=>d.data());
-      const slots=["09:00-10:00","10:00-11:00","11:00-12:00","12:00-13:00","14:00-15:00","15:00-16:00","16:00-17:00"];
-      const days=["Monday","Tuesday","Wednesday","Thursday","Friday"];
-      studentTimetable.innerHTML='';
-      slots.forEach(t=>{ let row=`<tr><td class="p-3 border">${t}</td>`; days.forEach(d=>{ let lec=lectures.find(l=>l.day===d&&l.time===t); row+=`<td class="p-3 border">${lec?lec.subject+" ("+lec.classroom+")":"Free"}</td>`; }); row+="</tr>"; studentTimetable.innerHTML+=row; });
+      const tbody = document.getElementById("studentTimetable");
+      tbody.innerHTML = '';
+      const qy = query(collection(fdb,"lectures"), where("className","==", currentUser.className));
+      const snap = await getDocs(qy);
+      const lectures = snap.docs.map(d=>d.data());
+
+      SLOT_TIMES.forEach(t=>{
+        let row = `<tr><td class="p-3 border">${t}</td>`;
+        WEEK_DAYS.forEach(d=>{
+          if (lunchBreakSlot && t===lunchBreakSlot) {
+            row += `<td class="p-3 border bg-yellow-100 text-center font-semibold">Lunch Break</td>`;
+          } else {
+            const lec = lectures.find(l=>l.day===d && l.time===t);
+            row += `<td class="p-3 border">${lec ? `${lec.subject} (${lec.classroom})` : "Free"}</td>`;
+          }
+        });
+        row += `</tr>`;
+        tbody.innerHTML += row;
+      });
     }
 
     async function loadTeacherTimetable(){
-      const q=query(collection(fdb,"lectures"),where("teacherId","==",currentUser.id));
-      const snap=await getDocs(q); const lectures=snap.docs.map(d=>({id:d.id,...d.data()}));
-      const slots=["09:00-10:00","10:00-11:00","11:00-12:00","12:00-13:00","14:00-15:00","15:00-16:00","16:00-17:00"];
-      const days=["Monday","Tuesday","Wednesday","Thursday","Friday"];
-      teacherTimetable.innerHTML='';
-      slots.forEach(t=>{ let row=`<tr><td class="p-3 border">${t}</td>`; days.forEach(d=>{ let lec=lectures.find(l=>l.day===d&&l.time===t); row += `<td class="p-3 border">` +
-  (lec
-    ? `${lec.subject}<br><span class='text-xs'>${lec.className} • ${lec.classroom}</span><br><button data-id='${lec.id}' class='delete-lecture bg-red-500 text-white text-xs px-2 py-0.5 rounded mt-1'>Delete</button>`
-    : "Free"
-  ) +
-  `</td>`;
- }); row+="</tr>"; teacherTimetable.innerHTML+=row; });
-      document.querySelectorAll(".delete-lecture").forEach(btn=>btn.onclick=async()=>{ await deleteDoc(doc(fdb,"lectures",btn.dataset.id)); loadTeacherTimetable(); });
+      const tbody = document.getElementById("teacherTimetable");
+      tbody.innerHTML = '';
+      const qy = query(collection(fdb,"lectures"), where("teacherId","==", currentUser.id));
+      const snap = await getDocs(qy);
+      const lectures = snap.docs.map(d=>({id:d.id, ...d.data()}));
+
+      SLOT_TIMES.forEach(t=>{
+        let row = `<tr><td class="p-3 border">${t}</td>`;
+        WEEK_DAYS.forEach(d=>{
+          if (lunchBreakSlot && t===lunchBreakSlot) {
+            row += `<td class="p-3 border bg-yellow-100 text-center font-semibold">Lunch Break</td>`;
+          } else {
+            const lec = lectures.find(l=>l.day===d && l.time===t);
+            if(lec){
+              row += `<td class="p-3 border">` +
+                `${lec.subject}<br><span class='text-xs'>${lec.className||""} ${lec.className?"• ":""}${lec.classroom}</span>` +
+                `<br><button data-id='${lec.id}' class='delete-lecture bg-red-500 text-white text-xs px-2 py-0.5 rounded mt-1'>Delete</button>` +
+              `</td>`;
+            } else {
+              row += `<td class="p-3 border">Free</td>`;
+            }
+          }
+        });
+        row += `</tr>`;
+        tbody.innerHTML += row;
+      });
+
+      // hook delete lecture
+      document.querySelectorAll(".delete-lecture").forEach(btn=>btn.onclick=async()=>{
+        await deleteDoc(doc(fdb,"lectures",btn.dataset.id));
+        showMessage("Lecture deleted");
+        loadTeacherTimetable();
+      });
     }
 
-    document.getElementById("addLectureForm").onsubmit=async e=>{
+    // ======= Add Lecture =======
+    document.getElementById("addLectureForm").onsubmit = async e=>{
       e.preventDefault();
-      const subject=subjectSelect.value,classNameVal=classSelect.value,classroom=classroomSelect.value,day=daySelect.value,time=timeSelect.value;
-      if(!subject||!classNameVal||!classroom||!day||!time){ showMessage("Fill all fields","error"); return; }
-      const snap=await getDocs(collection(fdb,"lectures"));
-      const all=snap.docs.map(d=>d.data());
-      const conflict=all.find(l=>(l.className===classNameVal&&l.day===day&&l.time===time)||(l.classroom===classroom&&l.day===day&&l.time===time)||(l.teacherId===currentUser.id&&l.day===day&&l.time===time));
+      const subject = document.getElementById("subjectSelect").value;
+      const classNameVal = document.getElementById("classSelect").value;
+      const classroom = document.getElementById("classroomSelect").value;
+      const day = document.getElementById("daySelect").value;
+      const time = document.getElementById("timeSelect").value;
+
+      if(!subject || !classNameVal || !classroom || !day || !time){ showMessage("Fill all fields","error"); return; }
+      if(lunchBreakSlot && time===lunchBreakSlot){ showMessage("Cannot schedule during Lunch Break","error"); return; }
+
+      // conflicts: same class/time or same room/time or same teacher/time
+      const allSnap = await getDocs(collection(fdb,"lectures"));
+      const all = allSnap.docs.map(d=>d.data());
+      const conflict = all.find(l =>
+        (l.className===classNameVal && l.day===day && l.time===time) ||
+        (l.classroom===classroom && l.day===day && l.time===time) ||
+        (l.teacherId===currentUser.id && l.day===day && l.time===time)
+      );
       if(conflict){ showMessage("Conflict detected","error"); return; }
-      await addDoc(collection(fdb,"lectures"),{subject,teacherId:currentUser.id,teacherName:currentUser.firstName+" "+currentUser.lastName,className:classNameVal,classroom,day,time});
-      loadTeacherTimetable(); showMessage("Lecture added");
+
+      await addDoc(collection(fdb,"lectures"),{
+        subject,
+        teacherId:currentUser.id,
+        teacherName: currentUser.firstName+" "+currentUser.lastName,
+        className: classNameVal,
+        classroom,
+        day,
+        time,
+        createdAt: new Date().toISOString()
+      });
+      showMessage("Lecture added");
+      loadTeacherTimetable();
     };
 
-    // splash timeout
-    setTimeout(()=>{ splashScreen.classList.add("hidden"); roleSelection.classList.remove("hidden"); },800);
+    // ======= Init: splash -> role selection =======
+    setTimeout(()=>{
+      document.getElementById("splashScreen").classList.add("hidden");
+      document.getElementById("roleSelection").classList.remove("hidden");
+    },800);
   </script>
 </body>
 </html>
