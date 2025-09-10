@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>SchedulAi - Firebase Edition</title>
+  <title>SchedulAi - Firebase Edition (with Admin)</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     body { font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; }
@@ -28,6 +28,7 @@
       <div class="flex gap-4 justify-center">
         <button onclick="selectRole('student')" class="px-6 py-3 bg-indigo-600 text-white rounded-lg">Student</button>
         <button onclick="selectRole('teacher')" class="px-6 py-3 bg-green-600 text-white rounded-lg">Teacher</button>
+        <button onclick="selectRole('admin')" class="px-6 py-3 bg-amber-600 text-white rounded-lg">Admin</button>
       </div>
     </div>
   </div>
@@ -54,24 +55,20 @@
         <input id="userId" placeholder="Student/Employee ID" class="w-full px-3 py-2 border rounded"/>
 
         <!-- Student-only fields -->
-        <div id="studentFields">
-          <!-- Department Dropdown -->
-          <select id="signupDept" class="w-full px-3 py-2 border rounded" required>
+        <div id="studentFields" class="hidden">
+          <select id="signupDept" class="w-full px-3 py-2 border rounded">
             <option value="">Select Department</option>
           </select>
-
-          <!-- Class Dropdown -->
-          <select id="signupClass" class="w-full px-3 py-2 border rounded" required>
+          <select id="signupClass" class="w-full px-3 py-2 border rounded">
             <option value="">Select Class</option>
           </select>
         </div>
 
         <input id="signupPassword" type="password" placeholder="Password" required class="w-full px-3 py-2 border rounded"/>
-        <p id="passwordHint" class="text-xs mt-1 text-gray-500">
-          Password must be at least 8 characters, include letters and numbers
-        </p>
+        <p id="passwordHint" class="text-xs mt-1 text-gray-500">Password must be at least 8 characters, include letters and numbers</p>
         <input id="confirmPassword" type="password" placeholder="Confirm password" required class="w-full px-3 py-2 border rounded"/>
         <button class="w-full bg-green-600 text-white py-2 rounded">Create Account</button>
+        <p class="text-xs text-gray-500">Note: Admin login is restricted to a single admin configured in Firestore settings.</p>
       </form>
 
       <div class="mt-4 text-center">
@@ -165,6 +162,17 @@
         <tbody id="teacherTimetable" class="divide-y"></tbody>
       </table>
     </div>
+  </main>
+
+  <!-- Admin Dashboard -->
+  <main id="adminDashboard" class="hidden min-h-screen p-8">
+    <header class="flex justify-between items-center mb-6">
+      <h1 class="text-2xl font-semibold">SchedulAi — Admin</h1>
+      <div class="flex items-center gap-3">
+        <div>Welcome, <strong id="adminName">Admin</strong></div>
+        <button onclick="logout()" class="px-3 py-1 rounded bg-gray-200">Logout</button>
+      </div>
+    </header>
 
     <!-- Management Panel -->
     <section class="bg-white p-4 rounded shadow">
@@ -178,6 +186,7 @@
           </form>
           <ul id="departmentsList" class="pl-4 text-sm text-gray-700"></ul>
         </div>
+
         <div>
           <h4 class="font-medium mb-2">Classes</h4>
           <form id="addClassForm" class="flex gap-2 mb-2">
@@ -189,6 +198,7 @@
           </form>
           <ul id="classesList" class="pl-4 text-sm text-gray-700"></ul>
         </div>
+
         <div>
           <h4 class="font-medium mb-2">Subjects</h4>
           <form id="addSubjectForm" class="flex gap-2 mb-2">
@@ -200,6 +210,7 @@
           </form>
           <ul id="subjectsList" class="pl-4 text-sm text-gray-700"></ul>
         </div>
+
         <div>
           <h4 class="font-medium mb-2">Classrooms</h4>
           <form id="addClassroomForm" class="flex gap-2 mb-2">
@@ -237,9 +248,10 @@
 
   <!-- Firebase + App JS -->
   <script type="module">
+    // ===== Firebase =====
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
     import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-    import { getFirestore, collection, doc, setDoc, getDoc, getDocs, addDoc, query, where, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    import { onSnapshot, getFirestore, collection, doc, setDoc, getDoc, getDocs, addDoc, query, where, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyCNTq71D6ZxNCl6uBw9Tmenn1WeMTJW0S4",
@@ -255,73 +267,77 @@
     const auth = getAuth(app);
     const fdb = getFirestore(app);
 
-    // ======= Global State =======
-    let currentUser = null, currentRole = null;
+    // ===== DOM Utils =====
+    const $  = (id) => document.getElementById(id);
+    const show = (el) => el.classList.remove("hidden");
+    const hide = (el) => el.classList.add("hidden");
+
+    // ===== Global State =====
+    let currentUser = null;
+    let currentRole = null;
     let lunchBreakSlot = null;
 
-    // ======= Utility =======
+    // ===== Constants =====
+    const SLOT_TIMES = [
+      "09:00-10:00","10:00-11:00","11:00-12:00","12:00-13:00",
+      "13:00-14:00","14:00-15:00","15:00-16:00","16:00-17:00"
+    ];
+    const WEEK_DAYS = ["Monday","Tuesday","Wednesday","Thursday","Friday"];
+
+    // ===== Messages =====
     const showMessage = (msg, type="success") => {
       const d = document.createElement("div");
       d.className = `p-3 rounded shadow ${type==="error"?"bg-red-100 text-red-700":"bg-green-100 text-green-700"} fade-in`;
       d.textContent = msg;
-      document.getElementById("messageContainer").appendChild(d);
+      $("messageContainer").appendChild(d);
       setTimeout(()=>d.remove(),3000);
     };
 
-    // ======= Role Handling =======
-    window.selectRole = role => {
+    // ===== Views =====
+    function switchView(view) {
+      const views = ["roleSelection","loginScreen","studentDashboard","teacherDashboard","adminDashboard","splashScreen"];
+      views.forEach(v => hide($(v)));
+      show($(view));
+    }
+
+    // ===== Role Selection =====
+    window.selectRole = (role) => {
       currentRole = role;
-      document.getElementById("roleSelection").classList.add("hidden");
-      document.getElementById("loginScreen").classList.remove("hidden");
-      document.getElementById("loginTitle").textContent = role.charAt(0).toUpperCase()+role.slice(1)+" Login";
-
-      // Hide class/department fields for teachers
-      const studentFields = document.getElementById("studentFields");
-      if (studentFields) {
-        if (role === "student") {
-          studentFields.style.display = "block";
-        } else {
-          studentFields.style.display = "none";
-        }
-      }
+      switchView("loginScreen");
+      $("loginTitle").textContent = role.charAt(0).toUpperCase()+role.slice(1)+" Login";
+      // student fields only if student selected
+      $("studentFields").classList.toggle("hidden", role !== "student");
     };
-
-    window.showRoleSelection = ()=>{
-      document.getElementById("loginScreen").classList.add("hidden");
-      document.getElementById("roleSelection").classList.remove("hidden");
+    window.showRoleSelection = () => {
       currentRole = null;
+      switchView("roleSelection");
     };
 
-    // ======= Auth Mode Toggle =======
+    // ===== Auth Mode Toggle =====
     let isLoginMode = true;
     window.toggleAuthMode = ()=>{
       isLoginMode = !isLoginMode;
-      document.getElementById("loginForm").classList.toggle("hidden",!isLoginMode);
-      document.getElementById("signupForm").classList.toggle("hidden",isLoginMode);
-      document.getElementById("toggleAuth").textContent = isLoginMode ? "Don't have an account? Sign up" : "Already have an account? Sign in";
-      // Only load dropdowns when student is selected and we're in signup
-      if (!isLoginMode && currentRole === "student") {
-        populateSignupDropdowns();
-      }
+      $("loginForm").classList.toggle("hidden", !isLoginMode);
+      $("signupForm").classList.toggle("hidden", isLoginMode);
+      $("toggleAuth").textContent = isLoginMode ? "Don't have an account? Sign up" : "Already have an account? Sign in";
+      if (!isLoginMode && currentRole === "student") populateSignupDropdowns();
     };
 
-    // ======= Populate Signup Dropdowns (student only) =======
+    // ===== Populate Signup Dropdowns (student only) =====
     async function populateSignupDropdowns(){
-      // Departments
-      const deptSnap = await getDocs(collection(fdb,"departments"));
-      const deptSelect = document.getElementById("signupDept");
-      if (deptSelect) {
+      try {
+        // Departments
+        const deptSnap = await getDocs(collection(fdb,"departments"));
+        const deptSelect = $("signupDept");
         deptSelect.innerHTML = '<option value="">Select Department</option>';
         deptSnap.forEach(d=>{
           const opt=document.createElement("option");
           opt.value=d.data().name; opt.textContent=d.data().name;
           deptSelect.appendChild(opt);
         });
-      }
-      // Classes
-      const classSnap = await getDocs(collection(fdb,"classes"));
-      const classSelect = document.getElementById("signupClass");
-      if (classSelect) {
+        // Classes
+        const classSnap = await getDocs(collection(fdb,"classes"));
+        const classSelect = $("signupClass");
         classSelect.innerHTML = '<option value="">Select Class</option>';
         classSnap.forEach(c=>{
           const data=c.data();
@@ -329,12 +345,14 @@
           opt.value=data.name; opt.textContent=`${data.name} (${data.department||"No Dept"})`;
           classSelect.appendChild(opt);
         });
+      } catch (e) {
+        console.error(e);
       }
     }
 
-    // ======= Password Strength Indicator =======
-    const signupPasswordEl = document.getElementById("signupPassword");
-    const passwordHint = document.getElementById("passwordHint");
+    // ===== Password Strength Indicator =====
+    const signupPasswordEl = $("signupPassword");
+    const passwordHint = $("passwordHint");
     signupPasswordEl.addEventListener("input", () => {
       const pass = signupPasswordEl.value;
       const regex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
@@ -350,29 +368,27 @@
       }
     });
 
-    // ======= Signup =======
-    document.getElementById("signupForm").addEventListener("submit",async e=>{
+    // ===== Signup =====
+    $("signupForm").addEventListener("submit", async (e)=>{
       e.preventDefault();
-      const first = document.getElementById("firstName").value.trim();
-      const last = document.getElementById("lastName").value.trim();
-      const email = document.getElementById("signupEmail").value.trim();
-      const mobile = document.getElementById("mobile").value.trim();
-      const userIdVal = document.getElementById("userId").value.trim();
-      const deptVal = (currentRole === "student") ? document.getElementById("signupDept").value : null;
-      const classVal = (currentRole === "student") ? document.getElementById("signupClass").value : null;
-      const pass = document.getElementById("signupPassword").value;
-      const confirm = document.getElementById("confirmPassword").value;
+      const first = $("firstName").value.trim();
+      const last = $("lastName").value.trim();
+      const email = $("signupEmail").value.trim();
+      const mobile = $("mobile").value.trim();
+      const userIdVal = $("userId").value.trim();
+      const deptVal = (currentRole === "student") ? $("signupDept").value : null;
+      const classVal = (currentRole === "student") ? $("signupClass").value : null;
+      const pass = $("signupPassword").value;
+      const confirm = $("confirmPassword").value;
 
       if(pass!==confirm){ showMessage("Passwords mismatch","error"); return; }
 
-      // ✅ Password constraints
       const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
       if (!passwordRegex.test(pass)) {
         showMessage("Password must be at least 8 characters long and contain letters and numbers","error");
         return;
       }
 
-      // If student, ensure dept/class are chosen
       if (currentRole === "student" && (!deptVal || !classVal)) {
         showMessage("Please select Department and Class","error");
         return;
@@ -396,195 +412,219 @@
       }catch(err){ console.error(err); showMessage("Signup failed","error"); }
     });
 
-    // ======= Login =======
-    document.getElementById("loginForm").addEventListener("submit",async e=>{
+    // ===== Single-Admin Enforcement =====
+    async function ensureAdminAccess(credUser){
+      // settings/admin document must exist with { uid: "<adminUid>" } OR { email: "<adminEmail>" }
+      const adminSnap = await getDoc(doc(fdb,"settings","admin"));
+      if (!adminSnap.exists()) {
+        showMessage("Admin not configured. Contact system owner.","error");
+        return false;
+      }
+      const cfg = adminSnap.data() || {};
+      const uidAllowed = cfg.uid && cfg.uid === credUser.uid;
+      const emailAllowed = cfg.email && cfg.email.toLowerCase() === (credUser.email||"").toLowerCase();
+      if (uidAllowed || emailAllowed) return true;
+
+      showMessage("This account is not authorized as the admin.","error");
+      return false;
+    }
+
+    // ===== Login =====
+    $("loginForm").addEventListener("submit", async (e)=>{
       e.preventDefault();
-      const email = document.getElementById("loginEmail").value.trim();
-      const pass = document.getElementById("loginPassword").value;
+      const email = $("loginEmail").value.trim();
+      const pass = $("loginPassword").value;
       try {
         const cred = await signInWithEmailAndPassword(auth, email, pass);
-        const snap = await getDoc(doc(fdb,"users",cred.user.uid));
-        if(!snap.exists()){ showMessage("Profile missing","error"); return; }
-        const data = snap.data();
-        if(data.role!==currentRole){ showMessage(`Wrong role for this account (${data.role})`,"error"); await signOut(auth); return; }
-        currentUser = { id: cred.user.uid, ...data };
-        document.getElementById("loginScreen").classList.add("hidden");
+        const profSnap = await getDoc(doc(fdb,"users",cred.user.uid));
+        if(!profSnap.exists()){ showMessage("Profile missing","error"); await signOut(auth); return; }
+        const data = profSnap.data();
+
+        // Role mismatch check (prevents student logging as teacher etc.)
+        if(data.role!==currentRole){
+          showMessage(`Wrong role for this account (${data.role})`,"error");
+          await signOut(auth);
+          return;
+        }
+
+        // Single-admin check
+        if (currentRole === "admin") {
+          const ok = await ensureAdminAccess(cred.user);
+          if (!ok) { await signOut(auth); return; }
+        }
+
+        currentUser = { id: cred.user.uid, email: cred.user.email, ...data };
+        hide($("loginScreen"));
 
         if(currentRole==="student"){
-          document.getElementById("studentDashboard").classList.remove("hidden");
-          document.getElementById("studentName").textContent = currentUser.firstName+" "+currentUser.lastName;
-          await loadLunchBreak(); // get lunch slot
+          show($("studentDashboard"));
+          $("studentName").textContent = `${currentUser.firstName} ${currentUser.lastName}`;
+          await loadLunchBreak();
           await loadStudentTimetable();
-        } else {
-          document.getElementById("teacherDashboard").classList.remove("hidden");
-          document.getElementById("teacherName").textContent = currentUser.firstName+" "+currentUser.lastName;
-          await initManagementPanel(); // includes loadLunchBreak()
+        } else if (currentRole === "teacher") {
+          show($("teacherDashboard"));
+          $("teacherName").textContent = `${currentUser.firstName} ${currentUser.lastName}`;
+          await loadLunchBreak();
+          await populateTeacherSelects();
           await loadTeacherTimetable();
+        } else if (currentRole === "admin") {
+          show($("adminDashboard"));
+          $("adminName").textContent = `${currentUser.firstName} ${currentUser.lastName}`;
+          await initManagementPanel();
         }
 
         showMessage("Login successful");
       }catch(err){ console.error(err); showMessage("Login failed","error"); }
     });
 
-    // ======= Logout =======
+    // ===== Logout =====
     window.logout = async ()=>{
       try { await signOut(auth); } catch(_) {}
       currentUser=null; currentRole=null;
-      document.getElementById("studentDashboard").classList.add("hidden");
-      document.getElementById("teacherDashboard").classList.add("hidden");
-      document.getElementById("roleSelection").classList.remove("hidden");
+      ["studentDashboard","teacherDashboard","adminDashboard"].forEach(id=>hide($(id)));
+      show($("roleSelection"));
     };
 
-    // ======= Management Panel (CRUD) =======
+    // ===== Generic Helpers for Lists & Selects =====
+    async function fetchAll(coll) {
+      const snap = await getDocs(collection(fdb, coll));
+      return snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    }
+
+    function fillSelect(selectEl, items, getText, getValue=getText, firstOption="-- Select --") {
+      if (!selectEl) return;
+      const opts = [`<option value="">${firstOption}</option>`]
+        .concat(items.map(it => `<option value="${getValue(it)}">${getText(it)}</option>`));
+      selectEl.innerHTML = opts.join("");
+    }
+
+    function renderList(listEl, items, formatRowHTML, onDelete) {
+      if (!listEl) return;
+      listEl.innerHTML = "";
+      items.forEach(it => {
+        const li = document.createElement("li");
+        li.className = "flex justify-between items-center";
+        li.innerHTML = formatRowHTML(it);
+        listEl.appendChild(li);
+      });
+      // bind delete buttons
+      listEl.querySelectorAll("[data-delete-id]").forEach(btn=>{
+        btn.onclick = async () => {
+          await onDelete(btn.getAttribute("data-delete-id"));
+        };
+      });
+    }
+
+    // ===== Management Panel (CRUD) =====
     async function renderDepartments(){
-      const snap=await getDocs(collection(fdb,"departments"));
-      const list=document.getElementById("departmentsList");
-      const classDept=document.getElementById("classDept");
-      const subjectDept=document.getElementById("subjectDept");
-      list.innerHTML=''; classDept.innerHTML='<option value="">-- Dept --</option>'; subjectDept.innerHTML='<option value="">-- Dept --</option>';
-      snap.forEach(docSnap=>{
-        const d=docSnap.data();
-        const li=document.createElement("li");
-        li.className="flex justify-between items-center";
-        li.innerHTML=`<span>${d.name}</span>
-          <button data-id="${docSnap.id}" class="delete-dept bg-red-500 text-white px-2 py-0.5 text-xs rounded">Delete</button>`;
-        list.appendChild(li);
-        const o1=document.createElement("option"); o1.value=d.name; o1.textContent=d.name; classDept.appendChild(o1);
-        const o2=document.createElement("option"); o2.value=d.name; o2.textContent=d.name; subjectDept.appendChild(o2);
-      });
-      document.querySelectorAll(".delete-dept").forEach(btn=>btn.onclick=async()=>{
-        await deleteDoc(doc(fdb,"departments",btn.dataset.id));
-        showMessage("Department deleted"); renderDepartments();
-      });
+      const items = await fetchAll("departments");
+      renderList($("departmentsList"), items, (d) =>
+        `<span>${d.name}</span>
+         <button data-delete-id="${d.id}" class="delete-dept bg-red-500 text-white px-2 py-0.5 text-xs rounded">Delete</button>`,
+        async (id) => { await deleteDoc(doc(fdb,"departments",id)); showMessage("Department deleted"); renderDepartments(); renderSubjects(); renderClasses(); }
+      );
+      fillSelect($("classDept"), items, d=>d.name, d=>d.name, "-- Dept --");
+      fillSelect($("subjectDept"), items, d=>d.name, d=>d.name, "-- Dept --");
     }
 
     async function renderClasses(){
-      const snap=await getDocs(collection(fdb,"classes"));
-      const list=document.getElementById("classesList");
-      const classSelect=document.getElementById("classSelect");
-      list.innerHTML=''; classSelect.innerHTML='<option value="">Select Class</option>';
-      snap.forEach(docSnap=>{
-        const d=docSnap.data();
-        const li=document.createElement("li");
-        li.className="flex justify-between items-center";
-        li.innerHTML=`<span>${d.name} (${d.department||"No Dept"})</span>
-          <button data-id="${docSnap.id}" class="delete-class bg-red-500 text-white px-2 py-0.5 text-xs rounded">Delete</button>`;
-        list.appendChild(li);
-        const opt=document.createElement("option"); opt.value=d.name; opt.textContent=d.name; classSelect.appendChild(opt);
-      });
-      document.querySelectorAll(".delete-class").forEach(btn=>btn.onclick=async()=>{
-        await deleteDoc(doc(fdb,"classes",btn.dataset.id));
-        showMessage("Class deleted"); renderClasses();
-      });
+      const items = await fetchAll("classes");
+      renderList($("classesList"), items, (c) =>
+        `<span>${c.name} (${c.department||"No Dept"})</span>
+         <button data-delete-id="${c.id}" class="delete-class bg-red-500 text-white px-2 py-0.5 text-xs rounded">Delete</button>`,
+        async (id) => { await deleteDoc(doc(fdb,"classes",id)); showMessage("Class deleted"); renderClasses(); }
+      );
     }
 
     async function renderSubjects(){
-      const snap=await getDocs(collection(fdb,"subjects"));
-      const list=document.getElementById("subjectsList");
-      const subjectSelect=document.getElementById("subjectSelect");
-      list.innerHTML=''; subjectSelect.innerHTML='<option value="">Select Subject</option>';
-      snap.forEach(docSnap=>{
-        const d=docSnap.data();
-        const li=document.createElement("li");
-        li.className="flex justify-between items-center";
-        li.innerHTML=`<span>${d.name} (${d.department||"No Dept"})</span>
-          <button data-id="${docSnap.id}" class="delete-subj bg-red-500 text-white px-2 py-0.5 text-xs rounded">Delete</button>`;
-        list.appendChild(li);
-        const opt=document.createElement("option"); opt.value=d.name; opt.textContent=d.name; subjectSelect.appendChild(opt);
-      });
-      document.querySelectorAll(".delete-subj").forEach(btn=>btn.onclick=async()=>{
-        await deleteDoc(doc(fdb,"subjects",btn.dataset.id));
-        showMessage("Subject deleted"); renderSubjects();
-      });
+      const items = await fetchAll("subjects");
+      renderList($("subjectsList"), items, (s) =>
+        `<span>${s.name} (${s.department||"No Dept"})</span>
+         <button data-delete-id="${s.id}" class="delete-subj bg-red-500 text-white px-2 py-0.5 text-xs rounded">Delete</button>`,
+        async (id) => { await deleteDoc(doc(fdb,"subjects",id)); showMessage("Subject deleted"); renderSubjects(); }
+      );
     }
 
     async function renderClassrooms(){
-      const snap=await getDocs(collection(fdb,"classrooms"));
-      const list=document.getElementById("classroomsList");
-      const classroomSelect=document.getElementById("classroomSelect");
-      list.innerHTML=''; classroomSelect.innerHTML='<option value="">Select Room</option>';
-      snap.forEach(docSnap=>{
-        const d=docSnap.data();
-        const li=document.createElement("li");
-        li.className="flex justify-between items-center";
-        li.innerHTML=`<span>${d.name} (${d.capacity||'N/A'})</span>
-          <button data-id="${docSnap.id}" class="delete-room bg-red-500 text-white px-2 py-0.5 text-xs rounded">Delete</button>`;
-        list.appendChild(li);
-        const opt=document.createElement("option"); opt.value=d.name; opt.textContent=d.name; classroomSelect.appendChild(opt);
-      });
-      document.querySelectorAll(".delete-room").forEach(btn=>btn.onclick=async()=>{
-        await deleteDoc(doc(fdb,"classrooms",btn.dataset.id));
-        showMessage("Classroom deleted"); renderClassrooms();
-      });
+      const items = await fetchAll("classrooms");
+      renderList($("classroomsList"), items, (r) =>
+        `<span>${r.name} (${r.capacity||'N/A'})</span>
+         <button data-delete-id="${r.id}" class="delete-room bg-red-500 text-white px-2 py-0.5 text-xs rounded">Delete</button>`,
+        async (id) => { await deleteDoc(doc(fdb,"classrooms",id)); showMessage("Classroom deleted"); renderClassrooms(); }
+      );
     }
-
-    document.getElementById("addDepartmentForm").onsubmit=async e=>{
-      e.preventDefault();
-      const name=document.getElementById("departmentName").value.trim();
-      if(!name) return;
-      await addDoc(collection(fdb,"departments"),{name});
-      document.getElementById("departmentName").value='';
-      showMessage("Department added"); renderDepartments();
-    };
-
-    document.getElementById("addClassForm").onsubmit=async e=>{
-      e.preventDefault();
-      const name=document.getElementById("className").value.trim();
-      const dept=document.getElementById("classDept").value || null;
-      if(!name) return;
-      await addDoc(collection(fdb,"classes"),{name,department:dept});
-      document.getElementById("className").value=''; document.getElementById("classDept").value='';
-      showMessage("Class added"); renderClasses();
-    };
-
-    document.getElementById("addSubjectForm").onsubmit=async e=>{
-      e.preventDefault();
-      const name=document.getElementById("subjectName").value.trim();
-      const dept=document.getElementById("subjectDept").value || null;
-      if(!name) return;
-      await addDoc(collection(fdb,"subjects"),{name,department:dept});
-      document.getElementById("subjectName").value=''; document.getElementById("subjectDept").value='';
-      showMessage("Subject added"); renderSubjects();
-    };
-
-    document.getElementById("addClassroomForm").onsubmit=async e=>{
-      e.preventDefault();
-      const name=document.getElementById("classroomName").value.trim();
-      const capacity=+document.getElementById("classroomCapacity").value||0;
-      if(!name) return;
-      await addDoc(collection(fdb,"classrooms"),{name,capacity});
-      document.getElementById("classroomName").value=''; document.getElementById("classroomCapacity").value='';
-      showMessage("Classroom added"); renderClassrooms();
-    };
 
     async function initManagementPanel(){
       await Promise.all([renderDepartments(), renderClasses(), renderSubjects(), renderClassrooms()]);
       await loadLunchBreak();
     }
 
-    // ======= Lunch Break =======
+    // Add Department
+    $("addDepartmentForm").addEventListener("submit", async (e)=>{
+      e.preventDefault();
+      const name = $("departmentName").value.trim();
+      if(!name) return;
+      await addDoc(collection(fdb,"departments"),{ name });
+      $("departmentName").value = "";
+      showMessage("Department added");
+      renderDepartments();
+    });
+
+    // Add Class
+    $("addClassForm").addEventListener("submit", async (e)=>{
+      e.preventDefault();
+      const name = $("className").value.trim();
+      const dept = $("classDept").value || null;
+      if(!name) return;
+      await addDoc(collection(fdb,"classes"),{ name, department: dept });
+      $("className").value = "";
+      showMessage("Class added");
+      renderClasses();
+    });
+
+    // Add Subject
+    $("addSubjectForm").addEventListener("submit", async (e)=>{
+      e.preventDefault();
+      const name = $("subjectName").value.trim();
+      const dept = $("subjectDept").value || null;
+      if(!name) return;
+      await addDoc(collection(fdb,"subjects"),{ name, department: dept });
+      $("subjectName").value = "";
+      showMessage("Subject added");
+      renderSubjects();
+    });
+
+    // Add Classroom
+    $("addClassroomForm").addEventListener("submit", async (e)=>{
+      e.preventDefault();
+      const name = $("classroomName").value.trim();
+      const capacity = Number($("classroomCapacity").value || 0) || null;
+      if(!name) return;
+      await addDoc(collection(fdb,"classrooms"),{ name, capacity });
+      $("classroomName").value = "";
+      $("classroomCapacity").value = "";
+      showMessage("Classroom added");
+      renderClassrooms();
+    });
+
+    // ===== Lunch Break =====
     async function loadLunchBreak(){
       const snap = await getDoc(doc(fdb,"settings","lunchBreak"));
-      if(snap.exists()){
-        lunchBreakSlot = snap.data().slot || null;
-        const cur = document.getElementById("currentLunchBreak");
-        if (cur) cur.textContent = lunchBreakSlot || "None";
-      } else {
-        lunchBreakSlot = null;
-        const elt = document.getElementById("currentLunchBreak");
-        if (elt) elt.textContent = "None";
-      }
+      lunchBreakSlot = snap.exists() ? (snap.data().slot || null) : null;
+      const cur = $("currentLunchBreak");
+      if (cur) cur.textContent = lunchBreakSlot || "None";
       updateTimeSelectOptions();
       return lunchBreakSlot;
     }
 
-    document.getElementById("lunchBreakForm").addEventListener("submit", async (e)=>{
+    $("lunchBreakForm").addEventListener("submit", async (e)=>{
       e.preventDefault();
-      const slot = document.getElementById("lunchBreakSlot").value;
+      const slot = $("lunchBreakSlot").value;
       if(!slot){ showMessage("Select a slot","error"); return; }
       await setDoc(doc(fdb,"settings","lunchBreak"),{ slot });
       lunchBreakSlot = slot;
-      document.getElementById("currentLunchBreak").textContent = slot;
+      const cur = $("currentLunchBreak");
+      if (cur) cur.textContent = slot;
       updateTimeSelectOptions();
       showMessage("Lunch break updated");
       if(currentRole==="teacher") await loadTeacherTimetable();
@@ -592,7 +632,7 @@
     });
 
     function updateTimeSelectOptions(){
-      const sel = document.getElementById("timeSelect");
+      const sel = $("timeSelect");
       if(!sel) return;
       [...sel.options].forEach(opt=>{
         if(!opt.value) return;
@@ -607,16 +647,13 @@
       });
     }
 
-    // ======= Timetables =======
-    const SLOT_TIMES = [
-      "09:00-10:00","10:00-11:00","11:00-12:00","12:00-13:00",
-      "13:00-14:00","14:00-15:00","15:00-16:00","16:00-17:00"
-    ];
-    const WEEK_DAYS = ["Monday","Tuesday","Wednesday","Thursday","Friday"];
-
+    // ===== Timetables =====
     async function loadStudentTimetable(){
-      const tbody = document.getElementById("studentTimetable");
+      const tbody = $("studentTimetable");
+      if (!tbody || !currentUser) return;
       tbody.innerHTML = '';
+
+      // Get all lectures for the student's class
       const qy = query(collection(fdb,"lectures"), where("className","==", currentUser.className));
       const snap = await getDocs(qy);
       const lectures = snap.docs.map(d=>d.data());
@@ -632,13 +669,16 @@
           }
         });
         row += `</tr>`;
-        tbody.innerHTML += row;
+        tbody.insertAdjacentHTML("beforeend", row);
       });
     }
 
     async function loadTeacherTimetable(){
-      const tbody = document.getElementById("teacherTimetable");
+      const tbody = $("teacherTimetable");
+      if (!tbody || !currentUser) return;
       tbody.innerHTML = '';
+
+      // Filter first by teacherId with Firestore, then build grid
       const qy = query(collection(fdb,"lectures"), where("teacherId","==", currentUser.id));
       const snap = await getDocs(qy);
       const lectures = snap.docs.map(d=>({id:d.id, ...d.data()}));
@@ -651,53 +691,68 @@
           } else {
             const lec = lectures.find(l=>l.day===d && l.time===t);
             if(lec){
-              row += `<td class="p-3 border">` +
-                `${lec.subject}<br><span class='text-xs'>${lec.className||""} ${lec.className?"• ":""}${lec.classroom}</span>` +
-                `<br><button data-id='${lec.id}' class='delete-lecture bg-red-500 text-white text-xs px-2 py-0.5 rounded mt-1'>Delete</button>` +
-              `</td>`;
+              row += `<td class="p-3 border">
+                        ${lec.subject}<br>
+                        <span class='text-xs'>${lec.className||""} ${lec.className?"• ":""}${lec.classroom}</span>
+                        <br><button data-id='${lec.id}' class='delete-lecture bg-red-500 text-white text-xs px-2 py-0.5 rounded mt-1'>Delete</button>
+                      </td>`;
             } else {
               row += `<td class="p-3 border">Free</td>`;
             }
           }
         });
         row += `</tr>`;
-        tbody.innerHTML += row;
+        tbody.insertAdjacentHTML("beforeend", row);
       });
 
       // hook delete lecture
-      document.querySelectorAll(".delete-lecture").forEach(btn=>btn.onclick=async()=>{
+      tbody.querySelectorAll(".delete-lecture").forEach(btn=>btn.onclick=async()=>{
         await deleteDoc(doc(fdb,"lectures",btn.dataset.id));
         showMessage("Lecture deleted");
         loadTeacherTimetable();
       });
     }
 
-    // ======= Add Lecture =======
-    document.getElementById("addLectureForm").onsubmit = async e=>{
+    // ===== Teacher: populate selects =====
+    async function populateTeacherSelects() {
+      const [subjects, classes, rooms] = await Promise.all([
+        fetchAll("subjects"),
+        fetchAll("classes"),
+        fetchAll("classrooms")
+      ]);
+      fillSelect($("subjectSelect"), subjects, s=>s.name);
+      fillSelect($("classSelect"), classes, c=>c.name);
+      fillSelect($("classroomSelect"), rooms, r=>r.name, r=>r.name, "Select Room");
+    }
+
+    // ===== Add Lecture (reduced-conflict query) =====
+    $("addLectureForm").addEventListener("submit", async (e)=>{
       e.preventDefault();
-      const subject = document.getElementById("subjectSelect").value;
-      const classNameVal = document.getElementById("classSelect").value;
-      const classroom = document.getElementById("classroomSelect").value;
-      const day = document.getElementById("daySelect").value;
-      const time = document.getElementById("timeSelect").value;
+      const subject = $("subjectSelect").value;
+      const classNameVal = $("classSelect").value;
+      const classroom = $("classroomSelect").value;
+      const day = $("daySelect").value;
+      const time = $("timeSelect").value;
 
       if(!subject || !classNameVal || !classroom || !day || !time){ showMessage("Fill all fields","error"); return; }
       if(lunchBreakSlot && time===lunchBreakSlot){ showMessage("Cannot schedule during Lunch Break","error"); return; }
 
-      // conflicts: same class/time or same room/time or same teacher/time
-      const allSnap = await getDocs(collection(fdb,"lectures"));
-      const all = allSnap.docs.map(d=>d.data());
-      const conflict = all.find(l =>
-        (l.className===classNameVal && l.day===day && l.time===time) ||
-        (l.classroom===classroom && l.day===day && l.time===time) ||
-        (l.teacherId===currentUser.id && l.day===day && l.time===time)
+      // Narrow read: only same day, then check conflicts locally
+      const sameDaySnap = await getDocs(query(collection(fdb,"lectures"), where("day","==",day)));
+      const sameDay = sameDaySnap.docs.map(d=>d.data());
+      const conflict = sameDay.find(l =>
+        (l.time===time) && (
+          l.className===classNameVal ||
+          l.classroom===classroom ||
+          l.teacherId===currentUser.id
+        )
       );
       if(conflict){ showMessage("Conflict detected","error"); return; }
 
       await addDoc(collection(fdb,"lectures"),{
         subject,
         teacherId:currentUser.id,
-        teacherName: currentUser.firstName+" "+currentUser.lastName,
+        teacherName: `${currentUser.firstName} ${currentUser.lastName}`,
         className: classNameVal,
         classroom,
         day,
@@ -706,13 +761,14 @@
       });
       showMessage("Lecture added");
       loadTeacherTimetable();
-    };
+    });
 
-    // ======= Init: splash -> role selection =======
+    // ===== Init: splash -> role selection =====
     setTimeout(()=>{
-      document.getElementById("splashScreen").classList.add("hidden");
-      document.getElementById("roleSelection").classList.remove("hidden");
+      hide($("splashScreen"));
+      show($("roleSelection"));
     },800);
   </script>
 </body>
+</html>
 </html>
