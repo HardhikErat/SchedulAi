@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>SchedulAi - Firebase Edition (with Admin)</title>
+  <title>SchedulAi - Firebase Edition</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     body { font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; }
@@ -11,99 +11,98 @@
     @keyframes fadeIn { from { opacity: 0 } to { opacity: 1 } }
   </style>
 </head>
-<body class="bg-gray-50">
-  <!-- Splash -->
-  <div id="splashScreen" class="fixed inset-0 bg-indigo-600 flex items-center justify-center z-50 text-white">
-    <div class="text-center">
-      <h1 class="text-4xl font-bold">SchedulAi</h1>
-      <p class="mt-2">Initializing...</p>
+<body class="bg-gradient-to-br from-gray-50 to-gray-100 text-gray-800">
+  <!-- Splash Screen -->
+  <div id="splashScreen" class="fixed inset-0 bg-gradient-to-r from-indigo-600 to-purple-700 flex items-center justify-center z-50 text-white">
+    <div class="text-center animate-pulse">
+      <h1 class="text-6xl font-extrabold tracking-tight drop-shadow-lg">SchedulAi</h1>
+      <p class="mt-4 text-lg opacity-90">Initializing...</p>
     </div>
   </div>
 
   <!-- Role Selection -->
-  <div id="roleSelection" class="min-h-screen hidden flex items-center justify-center p-6">
-    <div class="bg-white rounded-xl p-8 w-full max-w-2xl text-center">
-      <h2 class="text-2xl font-semibold mb-4">Welcome to SchedulAi</h2>
-      <p class="text-sm text-gray-600 mb-6">Choose your role to continue</p>
-      <div class="flex gap-4 justify-center">
-        <button onclick="selectRole('student')" class="px-6 py-3 bg-indigo-600 text-white rounded-lg">Student</button>
-        <button onclick="selectRole('teacher')" class="px-6 py-3 bg-green-600 text-white rounded-lg">Teacher</button>
-        <button onclick="selectRole('admin')" class="px-6 py-3 bg-amber-600 text-white rounded-lg">Admin</button>
+  <div id="roleSelection" class="hidden min-h-screen flex items-center justify-center p-6">
+    <div class="bg-white/80 backdrop-blur-md rounded-3xl shadow-2xl p-12 w-full max-w-lg text-center border border-gray-200">
+      <h2 class="text-4xl font-extrabold mb-4">Welcome to <span class="text-indigo-600">SchedulAi</span></h2>
+      <p class="text-sm text-gray-600 mb-10">Choose your role to continue</p>
+      <div class="flex gap-6 justify-center">
+        <button onclick="selectRole('student')" class="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 transition-all duration-200 rounded-xl text-white font-semibold shadow-md hover:scale-105">Student</button>
+        <button onclick="selectRole('teacher')" class="px-6 py-3 bg-green-600 hover:bg-green-700 transition-all duration-200 rounded-xl text-white font-semibold shadow-md hover:scale-105">Teacher</button>
       </div>
     </div>
   </div>
 
-  <!-- Login / Signup -->
-  <div id="loginScreen" class="hidden min-h-screen flex items-start justify-center p-10">
-    <div class="w-full max-w-md bg-white rounded-xl p-6 shadow">
-      <h2 id="loginTitle" class="text-xl font-semibold mb-3">Login</h2>
+  <!-- Login Screen -->
+  <div id="loginScreen" class="hidden min-h-screen flex items-center justify-center p-10">
+    <div class="w-full max-w-md bg-white/90 backdrop-blur-lg rounded-3xl shadow-2xl p-10 border border-gray-200">
+      <h2 id="loginTitle" class="text-3xl font-bold mb-8 text-center text-indigo-700">Login</h2>
 
-      <form id="loginForm" class="space-y-3">
-        <input id="loginEmail" type="email" placeholder="Email" required class="w-full px-3 py-2 border rounded"/>
-        <input id="loginPassword" type="password" placeholder="Password" required class="w-full px-3 py-2 border rounded"/>
-        <button class="w-full bg-indigo-600 text-white py-2 rounded">Sign In</button>
+      <!-- Login Form -->
+      <form id="loginForm" class="space-y-5">
+        <input id="loginEmail" type="email" placeholder="Email" required class="w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none"/>
+        <input id="loginPassword" type="password" placeholder="Password" required class="w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none"/>
+        <button class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded-xl font-semibold transition-all hover:scale-[1.02]">Sign In</button>
       </form>
 
-      <!-- Signup form -->
-      <form id="signupForm" class="space-y-3 hidden mt-4">
-        <div class="grid grid-cols-2 gap-2">
-          <input id="firstName" placeholder="First name" required class="px-3 py-2 border rounded"/>
-          <input id="lastName" placeholder="Last name" required class="px-3 py-2 border rounded"/>
+      <!-- Signup Form -->
+      <form id="signupForm" class="space-y-5 hidden mt-6">
+        <div class="grid grid-cols-2 gap-4">
+          <input id="firstName" placeholder="First name" required class="px-4 py-3 border rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none"/>
+          <input id="lastName" placeholder="Last name" required class="px-4 py-3 border rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none"/>
         </div>
-        <input id="signupEmail" type="email" placeholder="Email" required class="w-full px-3 py-2 border rounded"/>
-        <input id="mobile" placeholder="Mobile" class="w-full px-3 py-2 border rounded"/>
-        <input id="userId" placeholder="Student/Employee ID" class="w-full px-3 py-2 border rounded"/>
+        <input id="signupEmail" type="email" placeholder="Email" required class="w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none"/>
+        <input id="mobile" placeholder="Mobile" class="w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none"/>
+        <input id="userId" placeholder="Student/Employee ID" class="w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none"/>
 
-        <!-- Student-only fields -->
-        <div id="studentFields" class="hidden">
-          <select id="signupDept" class="w-full px-3 py-2 border rounded">
+        <div id="studentFields" class="space-y-3">
+          <select id="signupDept" class="w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none" required>
             <option value="">Select Department</option>
           </select>
-          <select id="signupClass" class="w-full px-3 py-2 border rounded">
+          <select id="signupClass" class="w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none" required>
             <option value="">Select Class</option>
           </select>
         </div>
 
-        <input id="signupPassword" type="password" placeholder="Password" required class="w-full px-3 py-2 border rounded"/>
+        <input id="signupPassword" type="password" placeholder="Password" required class="w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none"/>
         <p id="passwordHint" class="text-xs mt-1 text-gray-500">Password must be at least 8 characters, include letters and numbers</p>
-        <input id="confirmPassword" type="password" placeholder="Confirm password" required class="w-full px-3 py-2 border rounded"/>
-        <button class="w-full bg-green-600 text-white py-2 rounded">Create Account</button>
-        <p class="text-xs text-gray-500">Note: Admin login is restricted to a single admin configured in Firestore settings.</p>
+        <input id="confirmPassword" type="password" placeholder="Confirm password" required class="w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none"/>
+        <button class="w-full bg-green-600 hover:bg-green-700 text-white py-3 rounded-xl font-semibold transition-all hover:scale-[1.02]">Create Account</button>
       </form>
 
-      <div class="mt-4 text-center">
-        <button id="toggleAuth" onclick="toggleAuthMode()" class="text-indigo-600">Don't have an account? Sign up</button>
+      <!-- Toggle Auth -->
+      <div class="mt-6 text-center">
+        <button id="toggleAuth" onclick="toggleAuthMode()" class="text-indigo-600 hover:underline font-semibold">Don't have an account? Sign up</button>
       </div>
       <div class="mt-3 text-center">
-        <button onclick="showRoleSelection()" class="text-sm text-gray-600">← Back to role selection</button>
+        <button onclick="showRoleSelection()" class="text-sm text-gray-500 hover:text-gray-700">← Back to role selection</button>
       </div>
     </div>
   </div>
 
   <!-- Student Dashboard -->
   <main id="studentDashboard" class="hidden min-h-screen p-8">
-    <header class="flex justify-between items-center mb-6">
-      <h1 class="text-2xl font-semibold">SchedulAi — Student</h1>
-      <div class="flex items-center gap-3">
-        <div>Welcome, <strong id="studentName">Student</strong></div>
-        <button onclick="logout()" class="px-3 py-1 rounded bg-gray-200">Logout</button>
+    <header class="flex justify-between items-center mb-8">
+      <h1 class="text-3xl font-extrabold text-indigo-700">SchedulAi — Student</h1>
+      <div class="flex items-center gap-4">
+        <div class="text-gray-600">Welcome, <strong id="studentName" class="text-gray-900">Student</strong></div>
+        <button onclick="logout()" class="px-4 py-2 rounded-xl bg-gray-200 hover:bg-gray-300 transition-all">Logout</button>
       </div>
     </header>
     <section>
-      <h2 class="text-lg font-semibold mb-3">My Timetable</h2>
-      <div class="bg-white rounded shadow overflow-auto">
+      <h2 class="text-xl font-semibold mb-4">My Timetable</h2>
+      <div class="bg-white rounded-2xl shadow-lg overflow-auto border border-gray-200">
         <table class="w-full text-sm">
-          <thead class="bg-gray-50">
+          <thead class="bg-gray-50 text-gray-700">
             <tr>
-              <th class="p-3">Time</th>
-              <th class="p-3">Monday</th>
-              <th class="p-3">Tuesday</th>
-              <th class="p-3">Wednesday</th>
-              <th class="p-3">Thursday</th>
-              <th class="p-3">Friday</th>
+              <th class="p-3 text-left">Time</th>
+              <th class="p-3 text-left">Monday</th>
+              <th class="p-3 text-left">Tuesday</th>
+              <th class="p-3 text-left">Wednesday</th>
+              <th class="p-3 text-left">Thursday</th>
+              <th class="p-3 text-left">Friday</th>
             </tr>
           </thead>
-          <tbody id="studentTimetable" class="divide-y"></tbody>
+          <tbody id="studentTimetable" class="divide-y divide-gray-200"></tbody>
         </table>
       </div>
     </section>
@@ -111,29 +110,28 @@
 
   <!-- Teacher Dashboard -->
   <main id="teacherDashboard" class="hidden min-h-screen p-8">
-    <header class="flex justify-between items-center mb-6">
-      <h1 class="text-2xl font-semibold">SchedulAi — Teacher</h1>
-      <div class="flex items-center gap-3">
-        <div>Welcome, <strong id="teacherName">Teacher</strong></div>
-        <button onclick="logout()" class="px-3 py-1 rounded bg-gray-200">Logout</button>
+    <header class="flex justify-between items-center mb-8">
+      <h1 class="text-3xl font-extrabold text-indigo-700">SchedulAi — Teacher</h1>
+      <div class="flex items-center gap-4">
+        <div class="text-gray-600">Welcome, <strong id="teacherName" class="text-gray-900">Teacher</strong></div>
+        <button onclick="logout()" class="px-4 py-2 rounded-xl bg-gray-200 hover:bg-gray-300 transition-all">Logout</button>
       </div>
     </header>
 
-    <!-- Add lecture form -->
-    <form id="addLectureForm" class="grid grid-cols-6 gap-2 bg-white p-4 rounded shadow mb-6">
-      <select id="subjectSelect" class="col-span-2 p-2 border rounded" required>
+    <form id="addLectureForm" class="grid grid-cols-6 gap-3 bg-white p-6 rounded-2xl shadow-lg mb-6 border border-gray-200">
+      <select id="subjectSelect" class="col-span-2 p-3 border rounded-xl focus:ring-2 focus:ring-indigo-500" required>
         <option value="">Select Subject</option>
       </select>
-      <select id="classSelect" class="p-2 border rounded" required>
+      <select id="classSelect" class="p-3 border rounded-xl focus:ring-2 focus:ring-indigo-500" required>
         <option value="">Select Class</option>
       </select>
-      <select id="classroomSelect" class="p-2 border rounded" required>
+      <select id="classroomSelect" class="p-3 border rounded-xl focus:ring-2 focus:ring-indigo-500" required>
         <option value="">Select Room</option>
       </select>
-      <select id="daySelect" class="p-2 border rounded" required>
+      <select id="daySelect" class="p-3 border rounded-xl focus:ring-2 focus:ring-indigo-500" required>
         <option>Monday</option><option>Tuesday</option><option>Wednesday</option><option>Thursday</option><option>Friday</option>
       </select>
-      <select id="timeSelect" class="p-2 border rounded" required>
+      <select id="timeSelect" class="p-3 border rounded-xl focus:ring-2 focus:ring-indigo-500" required>
         <option>09:00-10:00</option>
         <option>10:00-11:00</option>
         <option>11:00-12:00</option>
@@ -143,90 +141,83 @@
         <option>15:00-16:00</option>
         <option>16:00-17:00</option>
       </select>
-      <button class="col-span-6 bg-green-600 text-white py-2 rounded">Add Lecture</button>
+      <button class="col-span-6 bg-green-600 hover:bg-green-700 text-white py-3 rounded-xl font-semibold transition-all hover:scale-[1.02]">Add Lecture</button>
     </form>
 
-    <!-- Timetable -->
-    <div class="bg-white rounded shadow overflow-auto mb-6">
+    <div class="bg-white rounded-2xl shadow-lg overflow-auto mb-6 border border-gray-200">
+      <div class="flex justify-between items-center p-4 border-b">
+        <h2 class="text-lg font-semibold">My Timetable</h2>
+        <button id="autoGenerateBtn" class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-semibold transition-all hover:scale-[1.02]">Auto-Generate Timetable</button>
+      </div>
       <table class="w-full text-sm">
-        <thead class="bg-gray-50">
+        <thead class="bg-gray-50 text-gray-700">
           <tr>
-            <th class="p-3">Time</th>
-            <th class="p-3">Monday</th>
-            <th class="p-3">Tuesday</th>
-            <th class="p-3">Wednesday</th>
-            <th class="p-3">Thursday</th>
-            <th class="p-3">Friday</th>
+            <th class="p-3 text-left">Time</th>
+            <th class="p-3 text-left">Monday</th>
+            <th class="p-3 text-left">Tuesday</th>
+            <th class="p-3 text-left">Wednesday</th>
+            <th class="p-3 text-left">Thursday</th>
+            <th class="p-3 text-left">Friday</th>
           </tr>
         </thead>
-        <tbody id="teacherTimetable" class="divide-y"></tbody>
+        <tbody id="teacherTimetable" class="divide-y divide-gray-200"></tbody>
       </table>
     </div>
-  </main>
 
-  <!-- Admin Dashboard -->
-  <main id="adminDashboard" class="hidden min-h-screen p-8">
-    <header class="flex justify-between items-center mb-6">
-      <h1 class="text-2xl font-semibold">SchedulAi — Admin</h1>
-      <div class="flex items-center gap-3">
-        <div>Welcome, <strong id="adminName">Admin</strong></div>
-        <button onclick="logout()" class="px-3 py-1 rounded bg-gray-200">Logout</button>
-      </div>
-    </header>
+    <div id="generatedTimetablesDisplay" class="hidden"></div>
 
-    <!-- Management Panel -->
-    <section class="bg-white p-4 rounded shadow">
+    <section class="bg-white p-6 rounded-2xl shadow-lg border border-gray-200">
       <h3 class="text-lg font-semibold mb-4">Management Panel</h3>
       <div class="grid grid-cols-2 gap-6">
+        <!-- Departments -->
         <div>
           <h4 class="font-medium mb-2">Departments</h4>
           <form id="addDepartmentForm" class="flex gap-2 mb-2">
-            <input id="departmentName" placeholder="Department" class="flex-1 p-2 border rounded" required />
-            <button class="px-3 bg-indigo-600 text-white rounded">Add</button>
+            <input id="departmentName" placeholder="Department" class="flex-1 p-3 border rounded-xl focus:ring-2 focus:ring-indigo-500" required />
+            <button class="px-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl">Add</button>
           </form>
-          <ul id="departmentsList" class="pl-4 text-sm text-gray-700"></ul>
+          <ul id="departmentsList" class="pl-4 text-sm text-gray-700 space-y-1"></ul>
         </div>
-
+        <!-- Classes -->
         <div>
           <h4 class="font-medium mb-2">Classes</h4>
           <form id="addClassForm" class="flex gap-2 mb-2">
-            <input id="className" placeholder="Class (e.g. CS-A)" class="flex-1 p-2 border rounded" required />
-            <select id="classDept" class="p-2 border rounded">
+            <input id="className" placeholder="Class (e.g. CS-A)" class="flex-1 p-3 border rounded-xl focus:ring-2 focus:ring-indigo-500" required />
+            <select id="classDept" class="p-3 border rounded-xl focus:ring-2 focus:ring-indigo-500">
               <option value="">-- Dept --</option>
             </select>
-            <button class="px-3 bg-indigo-600 text-white rounded">Add</button>
+            <button class="px-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl">Add</button>
           </form>
-          <ul id="classesList" class="pl-4 text-sm text-gray-700"></ul>
+          <ul id="classesList" class="pl-4 text-sm text-gray-700 space-y-1"></ul>
         </div>
-
+        <!-- Subjects -->
         <div>
           <h4 class="font-medium mb-2">Subjects</h4>
           <form id="addSubjectForm" class="flex gap-2 mb-2">
-            <input id="subjectName" placeholder="Subject" class="flex-1 p-2 border rounded" required />
-            <select id="subjectDept" class="p-2 border rounded">
+            <input id="subjectName" placeholder="Subject" class="flex-1 p-3 border rounded-xl focus:ring-2 focus:ring-indigo-500" required />
+            <select id="subjectDept" class="p-3 border rounded-xl focus:ring-2 focus:ring-indigo-500">
               <option value="">-- Dept --</option>
             </select>
-            <button class="px-3 bg-indigo-600 text-white rounded">Add</button>
+            <button class="px-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl">Add</button>
           </form>
-          <ul id="subjectsList" class="pl-4 text-sm text-gray-700"></ul>
+          <ul id="subjectsList" class="pl-4 text-sm text-gray-700 space-y-1"></ul>
         </div>
-
+        <!-- Classrooms -->
         <div>
           <h4 class="font-medium mb-2">Classrooms</h4>
           <form id="addClassroomForm" class="flex gap-2 mb-2">
-            <input id="classroomName" placeholder="Room (e.g. A101)" class="flex-1 p-2 border rounded" required />
-            <input id="classroomCapacity" type="number" placeholder="Capacity" class="w-24 p-2 border rounded" />
-            <button class="px-3 bg-indigo-600 text-white rounded">Add</button>
+            <input id="classroomName" placeholder="Room (e.g. A101)" class="flex-1 p-3 border rounded-xl focus:ring-2 focus:ring-indigo-500" required />
+            <input id="classroomCapacity" type="number" placeholder="Capacity" class="w-24 p-3 border rounded-xl focus:ring-2 focus:ring-indigo-500" />
+            <button class="px-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl">Add</button>
           </form>
-          <ul id="classroomsList" class="pl-4 text-sm text-gray-700"></ul>
+          <ul id="classroomsList" class="pl-4 text-sm text-gray-700 space-y-1"></ul>
         </div>
       </div>
 
-      <!-- Lunch Break Setting -->
       <div class="mt-8">
         <h4 class="font-medium mb-2">Lunch Break</h4>
         <form id="lunchBreakForm" class="flex gap-2 mb-2">
-          <select id="lunchBreakSlot" class="p-2 border rounded">
+          <select id="lunchBreakSlot" class="p-3 border rounded-xl focus:ring-2 focus:ring-indigo-500">
             <option value="">-- Select Slot --</option>
             <option>09:00-10:00</option>
             <option>10:00-11:00</option>
@@ -237,21 +228,19 @@
             <option>15:00-16:00</option>
             <option>16:00-17:00</option>
           </select>
-          <button class="px-3 bg-indigo-600 text-white rounded">Save</button>
+          <button class="px-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl">Save</button>
         </form>
-        <p class="text-sm text-gray-600">Current Lunch Break: <span id="currentLunchBreak">None</span></p>
+        <p class="text-sm text-gray-600">Current Lunch Break: <span id="currentLunchBreak" class="font-medium">None</span></p>
       </div>
     </section>
   </main>
 
+  <!-- Messages -->
   <div id="messageContainer" class="fixed bottom-4 right-4 space-y-2"></div>
-
-  <!-- Firebase + App JS -->
   <script type="module">
-    // ===== Firebase =====
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
     import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-    import { onSnapshot, getFirestore, collection, doc, setDoc, getDoc, getDocs, addDoc, query, where, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    import { getFirestore, collection, doc, setDoc, getDoc, getDocs, addDoc, query, where, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyCNTq71D6ZxNCl6uBw9Tmenn1WeMTJW0S4",
@@ -267,77 +256,73 @@
     const auth = getAuth(app);
     const fdb = getFirestore(app);
 
-    // ===== DOM Utils =====
-    const $  = (id) => document.getElementById(id);
-    const show = (el) => el.classList.remove("hidden");
-    const hide = (el) => el.classList.add("hidden");
-
-    // ===== Global State =====
-    let currentUser = null;
-    let currentRole = null;
+    // ======= Global State =======
+    let currentUser = null, currentRole = null;
     let lunchBreakSlot = null;
 
-    // ===== Constants =====
-    const SLOT_TIMES = [
-      "09:00-10:00","10:00-11:00","11:00-12:00","12:00-13:00",
-      "13:00-14:00","14:00-15:00","15:00-16:00","16:00-17:00"
-    ];
-    const WEEK_DAYS = ["Monday","Tuesday","Wednesday","Thursday","Friday"];
-
-    // ===== Messages =====
+    // ======= Utility =======
     const showMessage = (msg, type="success") => {
       const d = document.createElement("div");
       d.className = `p-3 rounded shadow ${type==="error"?"bg-red-100 text-red-700":"bg-green-100 text-green-700"} fade-in`;
       d.textContent = msg;
-      $("messageContainer").appendChild(d);
+      document.getElementById("messageContainer").appendChild(d);
       setTimeout(()=>d.remove(),3000);
     };
 
-    // ===== Views =====
-    function switchView(view) {
-      const views = ["roleSelection","loginScreen","studentDashboard","teacherDashboard","adminDashboard","splashScreen"];
-      views.forEach(v => hide($(v)));
-      show($(view));
-    }
-
-    // ===== Role Selection =====
-    window.selectRole = (role) => {
+    // ======= Role Handling =======
+    window.selectRole = role => {
       currentRole = role;
-      switchView("loginScreen");
-      $("loginTitle").textContent = role.charAt(0).toUpperCase()+role.slice(1)+" Login";
-      // student fields only if student selected
-      $("studentFields").classList.toggle("hidden", role !== "student");
-    };
-    window.showRoleSelection = () => {
-      currentRole = null;
-      switchView("roleSelection");
+      document.getElementById("roleSelection").classList.add("hidden");
+      document.getElementById("loginScreen").classList.remove("hidden");
+      document.getElementById("loginTitle").textContent = role.charAt(0).toUpperCase()+role.slice(1)+" Login";
+
+      // Hide class/department fields for teachers
+      const studentFields = document.getElementById("studentFields");
+      if (studentFields) {
+        if (role === "student") {
+          studentFields.style.display = "block";
+        } else {
+          studentFields.style.display = "none";
+        }
+      }
     };
 
-    // ===== Auth Mode Toggle =====
+    window.showRoleSelection = ()=>{
+      document.getElementById("loginScreen").classList.add("hidden");
+      document.getElementById("roleSelection").classList.remove("hidden");
+      currentRole = null;
+    };
+
+    // ======= Auth Mode Toggle =======
     let isLoginMode = true;
     window.toggleAuthMode = ()=>{
       isLoginMode = !isLoginMode;
-      $("loginForm").classList.toggle("hidden", !isLoginMode);
-      $("signupForm").classList.toggle("hidden", isLoginMode);
-      $("toggleAuth").textContent = isLoginMode ? "Don't have an account? Sign up" : "Already have an account? Sign in";
-      if (!isLoginMode && currentRole === "student") populateSignupDropdowns();
+      document.getElementById("loginForm").classList.toggle("hidden",!isLoginMode);
+      document.getElementById("signupForm").classList.toggle("hidden",isLoginMode);
+      document.getElementById("toggleAuth").textContent = isLoginMode ? "Don't have an account? Sign up" : "Already have an account? Sign in";
+      // Only load dropdowns when student is selected and we're in signup
+      if (!isLoginMode && currentRole === "student") {
+        populateSignupDropdowns();
+      }
     };
 
-    // ===== Populate Signup Dropdowns (student only) =====
+    // ======= Populate Signup Dropdowns (student only) =======
     async function populateSignupDropdowns(){
-      try {
-        // Departments
-        const deptSnap = await getDocs(collection(fdb,"departments"));
-        const deptSelect = $("signupDept");
+      // Departments
+      const deptSnap = await getDocs(collection(fdb,"departments"));
+      const deptSelect = document.getElementById("signupDept");
+      if (deptSelect) {
         deptSelect.innerHTML = '<option value="">Select Department</option>';
         deptSnap.forEach(d=>{
           const opt=document.createElement("option");
           opt.value=d.data().name; opt.textContent=d.data().name;
           deptSelect.appendChild(opt);
         });
-        // Classes
-        const classSnap = await getDocs(collection(fdb,"classes"));
-        const classSelect = $("signupClass");
+      }
+      // Classes
+      const classSnap = await getDocs(collection(fdb,"classes"));
+      const classSelect = document.getElementById("signupClass");
+      if (classSelect) {
         classSelect.innerHTML = '<option value="">Select Class</option>';
         classSnap.forEach(c=>{
           const data=c.data();
@@ -345,14 +330,12 @@
           opt.value=data.name; opt.textContent=`${data.name} (${data.department||"No Dept"})`;
           classSelect.appendChild(opt);
         });
-      } catch (e) {
-        console.error(e);
       }
     }
 
-    // ===== Password Strength Indicator =====
-    const signupPasswordEl = $("signupPassword");
-    const passwordHint = $("passwordHint");
+    // ======= Password Strength Indicator =======
+    const signupPasswordEl = document.getElementById("signupPassword");
+    const passwordHint = document.getElementById("passwordHint");
     signupPasswordEl.addEventListener("input", () => {
       const pass = signupPasswordEl.value;
       const regex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
@@ -368,27 +351,29 @@
       }
     });
 
-    // ===== Signup =====
-    $("signupForm").addEventListener("submit", async (e)=>{
+    // ======= Signup =======
+    document.getElementById("signupForm").addEventListener("submit",async e=>{
       e.preventDefault();
-      const first = $("firstName").value.trim();
-      const last = $("lastName").value.trim();
-      const email = $("signupEmail").value.trim();
-      const mobile = $("mobile").value.trim();
-      const userIdVal = $("userId").value.trim();
-      const deptVal = (currentRole === "student") ? $("signupDept").value : null;
-      const classVal = (currentRole === "student") ? $("signupClass").value : null;
-      const pass = $("signupPassword").value;
-      const confirm = $("confirmPassword").value;
+      const first = document.getElementById("firstName").value.trim();
+      const last = document.getElementById("lastName").value.trim();
+      const email = document.getElementById("signupEmail").value.trim();
+      const mobile = document.getElementById("mobile").value.trim();
+      const userIdVal = document.getElementById("userId").value.trim();
+      const deptVal = (currentRole === "student") ? document.getElementById("signupDept").value : null;
+      const classVal = (currentRole === "student") ? document.getElementById("signupClass").value : null;
+      const pass = document.getElementById("signupPassword").value;
+      const confirm = document.getElementById("confirmPassword").value;
 
       if(pass!==confirm){ showMessage("Passwords mismatch","error"); return; }
 
+      // ✅ Password constraints
       const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
       if (!passwordRegex.test(pass)) {
         showMessage("Password must be at least 8 characters long and contain letters and numbers","error");
         return;
       }
 
+      // If student, ensure dept/class are chosen
       if (currentRole === "student" && (!deptVal || !classVal)) {
         showMessage("Please select Department and Class","error");
         return;
@@ -412,219 +397,195 @@
       }catch(err){ console.error(err); showMessage("Signup failed","error"); }
     });
 
-    // ===== Single-Admin Enforcement =====
-    async function ensureAdminAccess(credUser){
-      // settings/admin document must exist with { uid: "<adminUid>" } OR { email: "<adminEmail>" }
-      const adminSnap = await getDoc(doc(fdb,"settings","admin"));
-      if (!adminSnap.exists()) {
-        showMessage("Admin not configured. Contact system owner.","error");
-        return false;
-      }
-      const cfg = adminSnap.data() || {};
-      const uidAllowed = cfg.uid && cfg.uid === credUser.uid;
-      const emailAllowed = cfg.email && cfg.email.toLowerCase() === (credUser.email||"").toLowerCase();
-      if (uidAllowed || emailAllowed) return true;
-
-      showMessage("This account is not authorized as the admin.","error");
-      return false;
-    }
-
-    // ===== Login =====
-    $("loginForm").addEventListener("submit", async (e)=>{
+    // ======= Login =======
+    document.getElementById("loginForm").addEventListener("submit",async e=>{
       e.preventDefault();
-      const email = $("loginEmail").value.trim();
-      const pass = $("loginPassword").value;
+      const email = document.getElementById("loginEmail").value.trim();
+      const pass = document.getElementById("loginPassword").value;
       try {
         const cred = await signInWithEmailAndPassword(auth, email, pass);
-        const profSnap = await getDoc(doc(fdb,"users",cred.user.uid));
-        if(!profSnap.exists()){ showMessage("Profile missing","error"); await signOut(auth); return; }
-        const data = profSnap.data();
-
-        // Role mismatch check (prevents student logging as teacher etc.)
-        if(data.role!==currentRole){
-          showMessage(`Wrong role for this account (${data.role})`,"error");
-          await signOut(auth);
-          return;
-        }
-
-        // Single-admin check
-        if (currentRole === "admin") {
-          const ok = await ensureAdminAccess(cred.user);
-          if (!ok) { await signOut(auth); return; }
-        }
-
-        currentUser = { id: cred.user.uid, email: cred.user.email, ...data };
-        hide($("loginScreen"));
+        const snap = await getDoc(doc(fdb,"users",cred.user.uid));
+        if(!snap.exists()){ showMessage("Profile missing","error"); return; }
+        const data = snap.data();
+        if(data.role!==currentRole){ showMessage(`Wrong role for this account (${data.role})`,"error"); await signOut(auth); return; }
+        currentUser = { id: cred.user.uid, ...data };
+        document.getElementById("loginScreen").classList.add("hidden");
 
         if(currentRole==="student"){
-          show($("studentDashboard"));
-          $("studentName").textContent = `${currentUser.firstName} ${currentUser.lastName}`;
-          await loadLunchBreak();
+          document.getElementById("studentDashboard").classList.remove("hidden");
+          document.getElementById("studentName").textContent = currentUser.firstName+" "+currentUser.lastName;
+          await loadLunchBreak(); // get lunch slot
           await loadStudentTimetable();
-        } else if (currentRole === "teacher") {
-          show($("teacherDashboard"));
-          $("teacherName").textContent = `${currentUser.firstName} ${currentUser.lastName}`;
-          await loadLunchBreak();
-          await populateTeacherSelects();
+        } else {
+          document.getElementById("teacherDashboard").classList.remove("hidden");
+          document.getElementById("teacherName").textContent = currentUser.firstName+" "+currentUser.lastName;
+          await initManagementPanel(); // includes loadLunchBreak()
           await loadTeacherTimetable();
-        } else if (currentRole === "admin") {
-          show($("adminDashboard"));
-          $("adminName").textContent = `${currentUser.firstName} ${currentUser.lastName}`;
-          await initManagementPanel();
         }
 
         showMessage("Login successful");
       }catch(err){ console.error(err); showMessage("Login failed","error"); }
     });
 
-    // ===== Logout =====
+    // ======= Logout =======
     window.logout = async ()=>{
       try { await signOut(auth); } catch(_) {}
       currentUser=null; currentRole=null;
-      ["studentDashboard","teacherDashboard","adminDashboard"].forEach(id=>hide($(id)));
-      show($("roleSelection"));
+      document.getElementById("studentDashboard").classList.add("hidden");
+      document.getElementById("teacherDashboard").classList.add("hidden");
+      document.getElementById("roleSelection").classList.remove("hidden");
     };
 
-    // ===== Generic Helpers for Lists & Selects =====
-    async function fetchAll(coll) {
-      const snap = await getDocs(collection(fdb, coll));
-      return snap.docs.map(d => ({ id: d.id, ...d.data() }));
-    }
-
-    function fillSelect(selectEl, items, getText, getValue=getText, firstOption="-- Select --") {
-      if (!selectEl) return;
-      const opts = [`<option value="">${firstOption}</option>`]
-        .concat(items.map(it => `<option value="${getValue(it)}">${getText(it)}</option>`));
-      selectEl.innerHTML = opts.join("");
-    }
-
-    function renderList(listEl, items, formatRowHTML, onDelete) {
-      if (!listEl) return;
-      listEl.innerHTML = "";
-      items.forEach(it => {
-        const li = document.createElement("li");
-        li.className = "flex justify-between items-center";
-        li.innerHTML = formatRowHTML(it);
-        listEl.appendChild(li);
-      });
-      // bind delete buttons
-      listEl.querySelectorAll("[data-delete-id]").forEach(btn=>{
-        btn.onclick = async () => {
-          await onDelete(btn.getAttribute("data-delete-id"));
-        };
-      });
-    }
-
-    // ===== Management Panel (CRUD) =====
+    // ======= Management Panel (CRUD) =======
     async function renderDepartments(){
-      const items = await fetchAll("departments");
-      renderList($("departmentsList"), items, (d) =>
-        `<span>${d.name}</span>
-         <button data-delete-id="${d.id}" class="delete-dept bg-red-500 text-white px-2 py-0.5 text-xs rounded">Delete</button>`,
-        async (id) => { await deleteDoc(doc(fdb,"departments",id)); showMessage("Department deleted"); renderDepartments(); renderSubjects(); renderClasses(); }
-      );
-      fillSelect($("classDept"), items, d=>d.name, d=>d.name, "-- Dept --");
-      fillSelect($("subjectDept"), items, d=>d.name, d=>d.name, "-- Dept --");
+      const snap=await getDocs(collection(fdb,"departments"));
+      const list=document.getElementById("departmentsList");
+      const classDept=document.getElementById("classDept");
+      const subjectDept=document.getElementById("subjectDept");
+      list.innerHTML=''; classDept.innerHTML='<option value="">-- Dept --</option>'; subjectDept.innerHTML='<option value="">-- Dept --</option>';
+      snap.forEach(docSnap=>{
+        const d=docSnap.data();
+        const li=document.createElement("li");
+        li.className="flex justify-between items-center";
+        li.innerHTML=`<span>${d.name}</span>
+          <button data-id="${docSnap.id}" class="delete-dept bg-red-500 text-white px-2 py-0.5 text-xs rounded">Delete</button>`;
+        list.appendChild(li);
+        const o1=document.createElement("option"); o1.value=d.name; o1.textContent=d.name; classDept.appendChild(o1);
+        const o2=document.createElement("option"); o2.value=d.name; o2.textContent=d.name; subjectDept.appendChild(o2);
+      });
+      document.querySelectorAll(".delete-dept").forEach(btn=>btn.onclick=async()=>{
+        await deleteDoc(doc(fdb,"departments",btn.dataset.id));
+        showMessage("Department deleted"); renderDepartments();
+      });
     }
 
     async function renderClasses(){
-      const items = await fetchAll("classes");
-      renderList($("classesList"), items, (c) =>
-        `<span>${c.name} (${c.department||"No Dept"})</span>
-         <button data-delete-id="${c.id}" class="delete-class bg-red-500 text-white px-2 py-0.5 text-xs rounded">Delete</button>`,
-        async (id) => { await deleteDoc(doc(fdb,"classes",id)); showMessage("Class deleted"); renderClasses(); }
-      );
+      const snap=await getDocs(collection(fdb,"classes"));
+      const list=document.getElementById("classesList");
+      const classSelect=document.getElementById("classSelect");
+      list.innerHTML=''; classSelect.innerHTML='<option value="">Select Class</option>';
+      snap.forEach(docSnap=>{
+        const d=docSnap.data();
+        const li=document.createElement("li");
+        li.className="flex justify-between items-center";
+        li.innerHTML=`<span>${d.name} (${d.department||"No Dept"})</span>
+          <button data-id="${docSnap.id}" class="delete-class bg-red-500 text-white px-2 py-0.5 text-xs rounded">Delete</button>`;
+        list.appendChild(li);
+        const opt=document.createElement("option"); opt.value=d.name; opt.textContent=d.name; classSelect.appendChild(opt);
+      });
+      document.querySelectorAll(".delete-class").forEach(btn=>btn.onclick=async()=>{
+        await deleteDoc(doc(fdb,"classes",btn.dataset.id));
+        showMessage("Class deleted"); renderClasses();
+      });
     }
 
     async function renderSubjects(){
-      const items = await fetchAll("subjects");
-      renderList($("subjectsList"), items, (s) =>
-        `<span>${s.name} (${s.department||"No Dept"})</span>
-         <button data-delete-id="${s.id}" class="delete-subj bg-red-500 text-white px-2 py-0.5 text-xs rounded">Delete</button>`,
-        async (id) => { await deleteDoc(doc(fdb,"subjects",id)); showMessage("Subject deleted"); renderSubjects(); }
-      );
+      const snap=await getDocs(collection(fdb,"subjects"));
+      const list=document.getElementById("subjectsList");
+      const subjectSelect=document.getElementById("subjectSelect");
+      list.innerHTML=''; subjectSelect.innerHTML='<option value="">Select Subject</option>';
+      snap.forEach(docSnap=>{
+        const d=docSnap.data();
+        const li=document.createElement("li");
+        li.className="flex justify-between items-center";
+        li.innerHTML=`<span>${d.name} (${d.department||"No Dept"})</span>
+          <button data-id="${docSnap.id}" class="delete-subj bg-red-500 text-white px-2 py-0.5 text-xs rounded">Delete</button>`;
+        list.appendChild(li);
+        const opt=document.createElement("option"); opt.value=d.name; opt.textContent=d.name; subjectSelect.appendChild(opt);
+      });
+      document.querySelectorAll(".delete-subj").forEach(btn=>btn.onclick=async()=>{
+        await deleteDoc(doc(fdb,"subjects",btn.dataset.id));
+        showMessage("Subject deleted"); renderSubjects();
+      });
     }
 
     async function renderClassrooms(){
-      const items = await fetchAll("classrooms");
-      renderList($("classroomsList"), items, (r) =>
-        `<span>${r.name} (${r.capacity||'N/A'})</span>
-         <button data-delete-id="${r.id}" class="delete-room bg-red-500 text-white px-2 py-0.5 text-xs rounded">Delete</button>`,
-        async (id) => { await deleteDoc(doc(fdb,"classrooms",id)); showMessage("Classroom deleted"); renderClassrooms(); }
-      );
+      const snap=await getDocs(collection(fdb,"classrooms"));
+      const list=document.getElementById("classroomsList");
+      const classroomSelect=document.getElementById("classroomSelect");
+      list.innerHTML=''; classroomSelect.innerHTML='<option value="">Select Room</option>';
+      snap.forEach(docSnap=>{
+        const d=docSnap.data();
+        const li=document.createElement("li");
+        li.className="flex justify-between items-center";
+        li.innerHTML=`<span>${d.name} (${d.capacity||'N/A'})</span>
+          <button data-id="${docSnap.id}" class="delete-room bg-red-500 text-white px-2 py-0.5 text-xs rounded">Delete</button>`;
+        list.appendChild(li);
+        const opt=document.createElement("option"); opt.value=d.name; opt.textContent=d.name; classroomSelect.appendChild(opt);
+      });
+      document.querySelectorAll(".delete-room").forEach(btn=>btn.onclick=async()=>{
+        await deleteDoc(doc(fdb,"classrooms",btn.dataset.id));
+        showMessage("Classroom deleted"); renderClassrooms();
+      });
     }
+
+    document.getElementById("addDepartmentForm").onsubmit=async e=>{
+      e.preventDefault();
+      const name=document.getElementById("departmentName").value.trim();
+      if(!name) return;
+      await addDoc(collection(fdb,"departments"),{name});
+      document.getElementById("departmentName").value='';
+      showMessage("Department added"); renderDepartments();
+    };
+
+    document.getElementById("addClassForm").onsubmit=async e=>{
+      e.preventDefault();
+      const name=document.getElementById("className").value.trim();
+      const dept=document.getElementById("classDept").value || null;
+      if(!name) return;
+      await addDoc(collection(fdb,"classes"),{name,department:dept});
+      document.getElementById("className").value=''; document.getElementById("classDept").value='';
+      showMessage("Class added"); renderClasses();
+    };
+
+    document.getElementById("addSubjectForm").onsubmit=async e=>{
+      e.preventDefault();
+      const name=document.getElementById("subjectName").value.trim();
+      const dept=document.getElementById("subjectDept").value || null;
+      if(!name) return;
+      await addDoc(collection(fdb,"subjects"),{name,department:dept});
+      document.getElementById("subjectName").value=''; document.getElementById("subjectDept").value='';
+      showMessage("Subject added"); renderSubjects();
+    };
+
+    document.getElementById("addClassroomForm").onsubmit=async e=>{
+      e.preventDefault();
+      const name=document.getElementById("classroomName").value.trim();
+      const capacity=+document.getElementById("classroomCapacity").value||0;
+      if(!name) return;
+      await addDoc(collection(fdb,"classrooms"),{name,capacity});
+      document.getElementById("classroomName").value=''; document.getElementById("classroomCapacity").value='';
+      showMessage("Classroom added"); renderClassrooms();
+    };
 
     async function initManagementPanel(){
       await Promise.all([renderDepartments(), renderClasses(), renderSubjects(), renderClassrooms()]);
       await loadLunchBreak();
     }
 
-    // Add Department
-    $("addDepartmentForm").addEventListener("submit", async (e)=>{
-      e.preventDefault();
-      const name = $("departmentName").value.trim();
-      if(!name) return;
-      await addDoc(collection(fdb,"departments"),{ name });
-      $("departmentName").value = "";
-      showMessage("Department added");
-      renderDepartments();
-    });
-
-    // Add Class
-    $("addClassForm").addEventListener("submit", async (e)=>{
-      e.preventDefault();
-      const name = $("className").value.trim();
-      const dept = $("classDept").value || null;
-      if(!name) return;
-      await addDoc(collection(fdb,"classes"),{ name, department: dept });
-      $("className").value = "";
-      showMessage("Class added");
-      renderClasses();
-    });
-
-    // Add Subject
-    $("addSubjectForm").addEventListener("submit", async (e)=>{
-      e.preventDefault();
-      const name = $("subjectName").value.trim();
-      const dept = $("subjectDept").value || null;
-      if(!name) return;
-      await addDoc(collection(fdb,"subjects"),{ name, department: dept });
-      $("subjectName").value = "";
-      showMessage("Subject added");
-      renderSubjects();
-    });
-
-    // Add Classroom
-    $("addClassroomForm").addEventListener("submit", async (e)=>{
-      e.preventDefault();
-      const name = $("classroomName").value.trim();
-      const capacity = Number($("classroomCapacity").value || 0) || null;
-      if(!name) return;
-      await addDoc(collection(fdb,"classrooms"),{ name, capacity });
-      $("classroomName").value = "";
-      $("classroomCapacity").value = "";
-      showMessage("Classroom added");
-      renderClassrooms();
-    });
-
-    // ===== Lunch Break =====
+    // ======= Lunch Break =======
     async function loadLunchBreak(){
       const snap = await getDoc(doc(fdb,"settings","lunchBreak"));
-      lunchBreakSlot = snap.exists() ? (snap.data().slot || null) : null;
-      const cur = $("currentLunchBreak");
-      if (cur) cur.textContent = lunchBreakSlot || "None";
+      if(snap.exists()){
+        lunchBreakSlot = snap.data().slot || null;
+        const cur = document.getElementById("currentLunchBreak");
+        if (cur) cur.textContent = lunchBreakSlot || "None";
+      } else {
+        lunchBreakSlot = null;
+        const elt = document.getElementById("currentLunchBreak");
+        if (elt) elt.textContent = "None";
+      }
       updateTimeSelectOptions();
       return lunchBreakSlot;
     }
 
-    $("lunchBreakForm").addEventListener("submit", async (e)=>{
+    document.getElementById("lunchBreakForm").addEventListener("submit", async (e)=>{
       e.preventDefault();
-      const slot = $("lunchBreakSlot").value;
+      const slot = document.getElementById("lunchBreakSlot").value;
       if(!slot){ showMessage("Select a slot","error"); return; }
       await setDoc(doc(fdb,"settings","lunchBreak"),{ slot });
       lunchBreakSlot = slot;
-      const cur = $("currentLunchBreak");
-      if (cur) cur.textContent = slot;
+      document.getElementById("currentLunchBreak").textContent = slot;
       updateTimeSelectOptions();
       showMessage("Lunch break updated");
       if(currentRole==="teacher") await loadTeacherTimetable();
@@ -632,7 +593,7 @@
     });
 
     function updateTimeSelectOptions(){
-      const sel = $("timeSelect");
+      const sel = document.getElementById("timeSelect");
       if(!sel) return;
       [...sel.options].forEach(opt=>{
         if(!opt.value) return;
@@ -647,13 +608,16 @@
       });
     }
 
-    // ===== Timetables =====
-    async function loadStudentTimetable(){
-      const tbody = $("studentTimetable");
-      if (!tbody || !currentUser) return;
-      tbody.innerHTML = '';
+    // ======= Timetables =======
+    const SLOT_TIMES = [
+      "09:00-10:00","10:00-11:00","11:00-12:00","12:00-13:00",
+      "13:00-14:00","14:00-15:00","15:00-16:00","16:00-17:00"
+    ];
+    const WEEK_DAYS = ["Monday","Tuesday","Wednesday","Thursday","Friday"];
 
-      // Get all lectures for the student's class
+    async function loadStudentTimetable(){
+      const tbody = document.getElementById("studentTimetable");
+      tbody.innerHTML = '';
       const qy = query(collection(fdb,"lectures"), where("className","==", currentUser.className));
       const snap = await getDocs(qy);
       const lectures = snap.docs.map(d=>d.data());
@@ -669,16 +633,13 @@
           }
         });
         row += `</tr>`;
-        tbody.insertAdjacentHTML("beforeend", row);
+        tbody.innerHTML += row;
       });
     }
 
     async function loadTeacherTimetable(){
-      const tbody = $("teacherTimetable");
-      if (!tbody || !currentUser) return;
+      const tbody = document.getElementById("teacherTimetable");
       tbody.innerHTML = '';
-
-      // Filter first by teacherId with Firestore, then build grid
       const qy = query(collection(fdb,"lectures"), where("teacherId","==", currentUser.id));
       const snap = await getDocs(qy);
       const lectures = snap.docs.map(d=>({id:d.id, ...d.data()}));
@@ -691,68 +652,53 @@
           } else {
             const lec = lectures.find(l=>l.day===d && l.time===t);
             if(lec){
-              row += `<td class="p-3 border">
-                        ${lec.subject}<br>
-                        <span class='text-xs'>${lec.className||""} ${lec.className?"• ":""}${lec.classroom}</span>
-                        <br><button data-id='${lec.id}' class='delete-lecture bg-red-500 text-white text-xs px-2 py-0.5 rounded mt-1'>Delete</button>
-                      </td>`;
+              row += `<td class="p-3 border">` +
+                `${lec.subject}<br><span class='text-xs'>${lec.className||""} ${lec.className?"• ":""}${lec.classroom}</span>` +
+                `<br><button data-id='${lec.id}' class='delete-lecture bg-red-500 text-white text-xs px-2 py-0.5 rounded mt-1'>Delete</button>` +
+              `</td>`;
             } else {
               row += `<td class="p-3 border">Free</td>`;
             }
           }
         });
         row += `</tr>`;
-        tbody.insertAdjacentHTML("beforeend", row);
+        tbody.innerHTML += row;
       });
 
       // hook delete lecture
-      tbody.querySelectorAll(".delete-lecture").forEach(btn=>btn.onclick=async()=>{
+      document.querySelectorAll(".delete-lecture").forEach(btn=>btn.onclick=async()=>{
         await deleteDoc(doc(fdb,"lectures",btn.dataset.id));
         showMessage("Lecture deleted");
         loadTeacherTimetable();
       });
     }
 
-    // ===== Teacher: populate selects =====
-    async function populateTeacherSelects() {
-      const [subjects, classes, rooms] = await Promise.all([
-        fetchAll("subjects"),
-        fetchAll("classes"),
-        fetchAll("classrooms")
-      ]);
-      fillSelect($("subjectSelect"), subjects, s=>s.name);
-      fillSelect($("classSelect"), classes, c=>c.name);
-      fillSelect($("classroomSelect"), rooms, r=>r.name, r=>r.name, "Select Room");
-    }
-
-    // ===== Add Lecture (reduced-conflict query) =====
-    $("addLectureForm").addEventListener("submit", async (e)=>{
+    // ======= Add Lecture =======
+    document.getElementById("addLectureForm").onsubmit = async e=>{
       e.preventDefault();
-      const subject = $("subjectSelect").value;
-      const classNameVal = $("classSelect").value;
-      const classroom = $("classroomSelect").value;
-      const day = $("daySelect").value;
-      const time = $("timeSelect").value;
+      const subject = document.getElementById("subjectSelect").value;
+      const classNameVal = document.getElementById("classSelect").value;
+      const classroom = document.getElementById("classroomSelect").value;
+      const day = document.getElementById("daySelect").value;
+      const time = document.getElementById("timeSelect").value;
 
       if(!subject || !classNameVal || !classroom || !day || !time){ showMessage("Fill all fields","error"); return; }
       if(lunchBreakSlot && time===lunchBreakSlot){ showMessage("Cannot schedule during Lunch Break","error"); return; }
 
-      // Narrow read: only same day, then check conflicts locally
-      const sameDaySnap = await getDocs(query(collection(fdb,"lectures"), where("day","==",day)));
-      const sameDay = sameDaySnap.docs.map(d=>d.data());
-      const conflict = sameDay.find(l =>
-        (l.time===time) && (
-          l.className===classNameVal ||
-          l.classroom===classroom ||
-          l.teacherId===currentUser.id
-        )
+      // conflicts: same class/time or same room/time or same teacher/time
+      const allSnap = await getDocs(collection(fdb,"lectures"));
+      const all = allSnap.docs.map(d=>d.data());
+      const conflict = all.find(l =>
+        (l.className===classNameVal && l.day===day && l.time===time) ||
+        (l.classroom===classroom && l.day===day && l.time===time) ||
+        (l.teacherId===currentUser.id && l.day===day && l.time===time)
       );
       if(conflict){ showMessage("Conflict detected","error"); return; }
 
       await addDoc(collection(fdb,"lectures"),{
         subject,
         teacherId:currentUser.id,
-        teacherName: `${currentUser.firstName} ${currentUser.lastName}`,
+        teacherName: currentUser.firstName+" "+currentUser.lastName,
         className: classNameVal,
         classroom,
         day,
@@ -761,14 +707,225 @@
       });
       showMessage("Lecture added");
       loadTeacherTimetable();
-    });
+    };
 
-    // ===== Init: splash -> role selection =====
+    // ======= NEW: AUTO-GENERATE TIMETABLE FUNCTIONS =======
+    document.getElementById('autoGenerateBtn').addEventListener('click', generateTimetable);
+    let generatedTimetables = [];
+
+    async function generateTimetable() {
+      showMessage("Generating timetable, please wait...", "info");
+      
+      const lecturesSnap = await getDocs(collection(fdb, 'lectures'));
+      const existingLectures = lecturesSnap.docs.map(doc => doc.data());
+      
+      const subjectsSnap = await getDocs(collection(fdb, 'subjects'));
+      const allSubjects = subjectsSnap.docs.map(doc => doc.data());
+      
+      const facultiesSnap = await getDocs(collection(fdb, 'users'));
+      const allFaculties = facultiesSnap.docs.map(doc => doc.data());
+      
+      const classroomsSnap = await getDocs(collection(fdb, 'classrooms'));
+      const allClassrooms = classroomsSnap.docs.map(doc => doc.data());
+
+      const days = WEEK_DAYS;
+      const timeSlots = SLOT_TIMES.filter(slot => slot !== lunchBreakSlot);
+      const maxClassesPerDay = 6;
+      const numSuggestions = 1;
+      generatedTimetables = [];
+
+      const hasConflict = (schedule, lecture) => {
+        const lectureExists = schedule.find(l => 
+          l.className === lecture.className && l.day === lecture.day && l.time === lecture.time
+        );
+        if (lectureExists) return true;
+
+        const teacherConflict = schedule.find(l => 
+          l.teacherId === lecture.teacherId && l.day === lecture.day && l.time === lecture.time
+        );
+        if (teacherConflict) return true;
+
+        const classroomConflict = schedule.find(l => 
+          l.classroom === lecture.classroom && l.day === lecture.day && l.time === lecture.time
+        );
+        if (classroomConflict) return true;
+        
+        return false;
+      };
+      
+      const generateSingleTimetable = (lecturesToSchedule, initialSchedule) => {
+        const schedule = [...initialSchedule];
+
+        lecturesToSchedule.forEach(c => {
+          let placed = false;
+          for (let day of days) {
+            const dailyClassCount = schedule.filter(l => l.className === c.className && l.day === day).length;
+            if (dailyClassCount >= maxClassesPerDay) continue;
+
+            for (let time of timeSlots) {
+              const randomClassroom = allClassrooms[Math.floor(Math.random() * allClassrooms.length)].name;
+              const lecture = {
+                subject: c.subject,
+                teacherId: c.teacherId,
+                teacherName: c.teacherName,
+                className: c.className,
+                classroom: randomClassroom,
+                day,
+                time
+              };
+              
+              if (!hasConflict(schedule, lecture)) {
+                schedule.push(lecture);
+                placed = true;
+                break;
+              }
+            }
+            if (placed) break;
+          }
+          if (!placed) {
+            console.warn(`Could not schedule class for ${c.subject} in ${c.className}`);
+          }
+        });
+
+        return schedule;
+      };
+      
+      try {
+        const allRequiredLectures = [];
+        const lecturesPerSubject = 3;
+
+        for (const subject of allSubjects) {
+          const faculty = allFaculties.find(f => f.role === 'teacher' && f.subjectsTaught?.includes(subject.name));
+          if (!faculty) {
+            console.warn(`No faculty found for subject: ${subject.name}`);
+            continue;
+          }
+
+          const studentBatch = "CS-A";
+
+          for (let i = 0; i < lecturesPerSubject; i++) {
+            allRequiredLectures.push({
+              subject: subject.name,
+              teacherId: faculty.id,
+              teacherName: `${faculty.firstName} ${faculty.lastName}`,
+              className: studentBatch
+            });
+          }
+        }
+        
+        for (let i = 0; i < numSuggestions; i++) {
+          const shuffledLectures = allRequiredLectures.sort(() => Math.random() - 0.5);
+          const timetable = generateSingleTimetable(shuffledLectures, existingLectures);
+          generatedTimetables.push(timetable);
+        }
+        
+        displayGeneratedTimetables(generatedTimetables);
+        showMessage("Timetables generated successfully!");
+        
+      } catch (error) {
+        console.error("Error generating timetable:", error);
+        showMessage("Failed to generate timetable.", "error");
+      }
+    }
+    
+    function displayGeneratedTimetables(timetables) {
+        let displayDiv = document.getElementById('generatedTimetablesDisplay');
+        if (!displayDiv) {
+            displayDiv = document.createElement('div');
+            displayDiv.id = 'generatedTimetablesDisplay';
+            displayDiv.className = 'mt-8';
+            document.getElementById('teacherDashboard').appendChild(displayDiv);
+        }
+    
+        displayDiv.innerHTML = '';
+        displayDiv.classList.remove('hidden');
+        
+        timetables.forEach((timetable, index) => {
+            const suggestionHTML = `
+                <div class="mb-8 p-4 bg-gray-100 rounded shadow-inner">
+                    <h4 class="text-xl font-semibold mb-2">Suggestion ${index + 1}</h4>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="p-3">Time</th>
+                                    ${WEEK_DAYS.map(day => 
+                                        `<th class="p-3">${day}</th>`
+                                    ).join('')}
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200">
+                                ${SLOT_TIMES.map(time => {
+                                    const timeRow = `
+                                        <tr>
+                                            <td class="p-3 font-medium">${time}</td>
+                                            ${WEEK_DAYS.map(day => {
+                                                if (lunchBreakSlot && time === lunchBreakSlot) {
+                                                  return `<td class="p-3 bg-yellow-100 text-center font-semibold">Lunch Break</td>`;
+                                                }
+                                                const lecture = timetable.find(l => l.day === day && l.time === time);
+                                                return `
+                                                    <td class="p-3 text-sm text-gray-500">
+                                                        ${lecture ? `
+                                                            <strong>${lecture.subject}</strong><br>
+                                                            <span class="text-xs">Room: ${lecture.classroom}</span><br>
+                                                            <span class="text-xs">Teacher: ${lecture.teacherName}</span>
+                                                        ` : 'Free'}
+                                                    </td>
+                                                `;
+                                            }).join('')}
+                                        </tr>
+                                    `;
+                                    return timeRow;
+                                }).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                    <button class="save-timetable-btn mt-4 px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700" data-index="${index}">
+                        Save This Timetable
+                    </button>
+                </div>
+            `;
+            displayDiv.innerHTML += suggestionHTML;
+        });
+
+        document.querySelectorAll('.save-timetable-btn').forEach(button => {
+            button.addEventListener('click', (e) => {
+                const index = e.target.getAttribute('data-index');
+                saveSelectedTimetable(timetables[index]);
+            });
+        });
+    }
+
+    async function saveSelectedTimetable(timetable) {
+        showMessage("Saving timetable, please wait...", "info");
+      
+        try {
+          const lecturesRef = collection(fdb, 'lectures');
+          const existingLectures = await getDocs(lecturesRef);
+      
+          const deletePromises = existingLectures.docs.map(doc => deleteDoc(doc.ref));
+          await Promise.all(deletePromises);
+          
+          const addPromises = timetable.map(lecture => {
+            return addDoc(lecturesRef, lecture);
+          });
+          await Promise.all(addPromises);
+          
+          showMessage("Timetable saved successfully!", "success");
+          loadTeacherTimetable();
+          document.getElementById('generatedTimetablesDisplay').classList.add('hidden');
+        } catch (error) {
+          console.error("Error saving timetable:", error);
+          showMessage("Failed to save timetable.", "error");
+        }
+      }
+
+    // ======= Init: splash -> role selection =======
     setTimeout(()=>{
-      hide($("splashScreen"));
-      show($("roleSelection"));
+      document.getElementById("splashScreen").classList.add("hidden");
+      document.getElementById("roleSelection").classList.remove("hidden");
     },800);
   </script>
 </body>
-</html>
 </html>
